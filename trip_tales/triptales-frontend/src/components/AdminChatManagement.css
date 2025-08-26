@@ -1,0 +1,259 @@
+/* AdminChatManagement.css */
+.admin-chat-management {
+  padding: 20px;
+  height: calc(100vh - 80px);
+}
+
+.chat-management-title {
+  color: #333;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chat-management-container {
+  display: flex;
+  height: calc(100% - 60px);
+  gap: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.conversations-sidebar {
+  width: 350px;
+  border-right: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-container {
+  position: relative;
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 15px 10px 35px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 25px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+}
+
+.conversations-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.conversation-item {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.conversation-item:hover {
+  background-color: #f5f5f5;
+}
+
+.conversation-item.selected {
+  background-color: #e3f2fd;
+}
+
+.conversation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.user-name {
+  font-weight: bold;
+  color: #333;
+}
+
+.blocked-badge {
+  background-color: #f44336;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.unread-count, .message-count {
+  background-color: #2196f3;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.post-title {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.last-message {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #888;
+}
+
+.last-message-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
+}
+
+.last-message-time {
+  font-size: 11px;
+}
+
+.conversation-actions {
+  margin-top: 10px;
+}
+
+.block-user-btn, .unblock-user-btn {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.block-user-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.unblock-user-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.block-user-btn:hover {
+  background-color: #d32f2f;
+}
+
+.unblock-user-btn:hover {
+  background-color: #388e3c;
+}
+
+.messages-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.messages-header {
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.messages-container {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.message {
+  padding: 10px 15px;
+  border-radius: 8px;
+  max-width: 80%;
+}
+
+.user-message {
+  align-self: flex-start;
+  background-color: #e3f2fd;
+}
+
+.other-message {
+  align-self: flex-end;
+  background-color: #f5f5f5;
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-size: 12px;
+  color: #666;
+}
+
+.sender-name {
+  font-weight: bold;
+}
+
+.message-body {
+  font-size: 14px;
+  color: #333;
+}
+
+.no-conversations, .no-messages, .select-chat-prompt {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #888;
+  font-style: italic;
+}
+
+.select-chat-prompt {
+  flex-direction: column;
+  gap: 15px;
+}
+
+.select-chat-prompt i {
+  font-size: 48px;
+  color: #ccc;
+}
+
+.chat-management-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 18px;
+  color: #666;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-danger {
+  background-color: #f44336;
+  color: white;
+}
+
+.btn-success {
+  background-color: #4caf50;
+  color: white;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}

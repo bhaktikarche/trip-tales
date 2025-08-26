@@ -1,0 +1,121 @@
+CREATE DATABASE IF NOT EXISTS triptales_db;
+USE triptales_db;
+
+
+CREATE TABLE bookmarks (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  post_id INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE comments (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  post_id INT NOT NULL,
+  user_id INT NOT NULL,
+  comment_text TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE experience_summary (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  post_id INT NOT NULL,
+  generated_link VARCHAR(255) UNIQUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  status ENUM('Active', 'Inactive', 'Pending') DEFAULT 'Active',
+  summary_text TEXT
+);
+
+CREATE TABLE helpfuls (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  post_id INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE likes (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  post_id INT,
+  user_id INT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE notifications (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  receiver_id INT NOT NULL,
+  sender_id INT NOT NULL,
+  post_id INT NOT NULL,
+  type ENUM('comment') NOT NULL,
+  is_read TINYINT(1) DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE post_images (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  post_id INT NOT NULL,
+  image_url VARCHAR(255) NOT NULL,
+  caption VARCHAR(255)
+);
+
+CREATE TABLE posts (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  user_id INT,
+  title VARCHAR(255) NOT NULL,
+  location_name VARCHAR(255) NOT NULL,
+  latitude DOUBLE,
+  longitude DOUBLE,
+  experience TEXT NOT NULL,
+  budget DECIMAL(10,2) NOT NULL,
+  duration_days INT,
+  best_season VARCHAR(100),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE travel_logs (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  location VARCHAR(255) NOT NULL,
+  experience TEXT NOT NULL,
+  budget DECIMAL(10,2) NOT NULL,
+  suggestions TEXT,
+  photos JSON NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE users (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100),
+  email VARCHAR(100) UNIQUE,
+  username VARCHAR(50) UNIQUE,
+  password VARCHAR(255),
+  gender VARCHAR(10),
+  dob DATE,
+  country VARCHAR(50),
+  role ENUM('user', 'admin') DEFAULT 'user',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+----------------------------------------------------16-8-25--------------------------------------------------
+
+mysql> CREATE TABLE IF NOT EXISTS user_experiences (
+    ->   id INT AUTO_INCREMENT PRIMARY KEY,
+    ->   user_id INT NOT NULL,
+    ->   experience TEXT NOT NULL,
+    ->   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ->   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    ->   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    -> );
+
+
+    mysql> ALTER TABLE user_experiences
+    -> ADD CONSTRAINT unique_user_experience UNIQUE (user_id);
+Query OK, 0 rows affected (0.09 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+
+CREATE TABLE announcements (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  description TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
