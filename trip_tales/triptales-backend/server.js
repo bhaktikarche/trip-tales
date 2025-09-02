@@ -51,8 +51,8 @@ io.on("connection", (socket) => {
   // Join chat room
   socket.on("joinChat", ({ chatId, userId }) => {
     try {
+      console.log(`👥 User ${userId} joined chat_${chatId}`);
       socket.join(`chat_${chatId}`);
-      console.log(`User ${userId} joined chat_${chatId}`);
 
       // Mark messages as read
       db.query(
@@ -76,14 +76,32 @@ io.on("connection", (socket) => {
     }
   });
 
+  // Handle request for chat history
+  socket.on("requestChatHistory", ({ chatId }) => {
+    db.query(
+      `SELECT m.id, m.sender_id, m.body, m.created_at, u.username AS sender_name
+       FROM messages m
+       JOIN users u ON u.id = m.sender_id
+       WHERE chat_id = ?
+       ORDER BY m.created_at ASC`,
+      [chatId]
+    ).then(([messages]) => {
+      socket.emit("chatHistory", messages);
+    });
+  });
+
   // Handle sending message
   socket.on("sendMessage", async ({ chatId, senderId, body }) => {
     try {
+      console.log("📨 Received message:", { chatId, senderId, body });
+      
+      // First insert the message into database
       const [result] = await db.query(
         "INSERT INTO messages (chat_id, sender_id, body) VALUES (?, ?, ?)",
         [chatId, senderId, body]
       );
 
+      // Then retrieve the complete message with user info
       const [rows] = await db.query(
         `SELECT m.id, m.sender_id, m.body, m.created_at, u.username AS sender_name
          FROM messages m
@@ -93,19 +111,22 @@ io.on("connection", (socket) => {
       );
 
       const message = rows[0];
+      console.log("📤 Broadcasting message:", message);
 
-      // Broadcast to all in the room
+      // Broadcast to all in the room (including sender)
       io.to(`chat_${chatId}`).emit("receiveMessage", message);
       
-      // Update unread counts for other participants
+      // Update unread counts for other participants only
       await db.query(
         `UPDATE chat_participants 
          SET unread_count = unread_count + 1 
          WHERE chat_id = ? AND user_id != ?`,
         [chatId, senderId]
       );
+
     } catch (err) {
       console.error("❌ Error sending message:", err);
+      socket.emit("messageError", { error: "Failed to send message" });
     }
   });
 
@@ -126,7 +147,7 @@ const testDatabaseConnection = async () => {
   }
 };
 
-// Middleware to authenticate admin - FIXED
+// Middleware to authenticate admin
 function authenticateAdmin(req, res, next) {
   const token = req.header('Authorization')?.replace('Bearer ', '');
   
@@ -142,7 +163,7 @@ function authenticateAdmin(req, res, next) {
     const decoded = jwt.verify(token, jwtSecret);
     console.log("Decoded token:", decoded);
     
-    // FIX: Check for role instead of isAdmin
+    // Check for role instead of isAdmin
     if (decoded.role !== 'admin') {
       return res.status(403).json({ error: "Access denied. Admin privileges required." });
     }
@@ -186,7 +207,7 @@ const initializeApp = async () => {
   app.use("/api/feedback", feedbackRoutes);
   app.use("/api/chats", chatRoutes);
 
-  // Get user status (blocked or not) - ADDED THIS ENDPOINT (MOVED INSIDE initializeApp)
+  // Get user status (blocked or not)
   app.get('/api/users/:userId/status', async (req, res) => {
     try {
       const { userId } = req.params;

@@ -1,76 +1,51 @@
 import { io } from "socket.io-client";
 
-const SOCKET_URL = "http://localhost:5000";
-
-let socket = null;
+const socket = io("http://localhost:5000", {
+  transports: ["websocket"],
+  autoConnect: false,
+});
 
 export const connectSocket = (userId) => {
-  if (socket && socket.connected) {
-    return socket;
+  if (!socket.connected) {
+    socket.auth = { userId };
+    socket.connect();
   }
-
-  socket = io(SOCKET_URL, {
-    transports: ["websocket", "polling"],
-    autoConnect: true,
-    auth: { userId }
-  });
-
-  socket.on("connect", () => {
-    console.log("✅ Connected to server");
-  });
-
-  socket.on("connect_error", (error) => {
-    console.error("❌ Socket connection error:", error);
-  });
-
-  socket.on("disconnect", (reason) => {
-    console.log("🔴 Disconnected:", reason);
-  });
-
-  return socket;
 };
 
 export const joinChat = (chatId, userId) => {
-  if (!socket || !socket.connected) {
-    console.error("Socket not connected");
+  if (!chatId || !userId) {
+    console.error("❌ chatId or userId missing in joinChat");
     return;
   }
-  
   console.log(`🟢 User ${userId} joining chat ${chatId}`);
   socket.emit("joinChat", { chatId, userId });
 };
 
 export const sendMessage = (chatId, senderId, body) => {
-  if (!socket || !socket.connected) {
-    console.error("Socket not connected");
+  if (!chatId || !senderId || !body) {
+    console.error("❌ Missing chatId, senderId, or body in sendMessage");
     return;
   }
-  
   console.log(`📨 Sending message: ${body} in chat ${chatId}`);
   socket.emit("sendMessage", { chatId, senderId, body });
 };
 
 export const receiveMessage = (callback) => {
-  if (!socket) return;
-  socket.on("receiveMessage", callback);
+  socket.on("receiveMessage", (message) => {
+    console.log("📩 New message received:", message);
+    callback(message);
+  });
 };
 
 export const getChatHistory = (callback) => {
-  if (!socket) return;
-  socket.on("chatHistory", callback);
+  socket.on("chatHistory", (messages) => {
+    console.log("📜 Chat history received:", messages);
+    callback(messages);
+  });
 };
 
 export const disconnectSocket = () => {
-  if (socket) {
-    socket.disconnect();
-    socket = null;
-  }
-};
-
-export const removeAllListeners = () => {
-  if (socket) {
-    socket.removeAllListeners();
-  }
+  socket.disconnect();
 };
 
 export default socket;

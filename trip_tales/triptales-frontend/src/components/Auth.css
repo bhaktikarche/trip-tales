@@ -1,103 +1,267 @@
-/* Auth.css */
+/* ================== Root Theme ================== */
 :root {
   --travel-primary: #FF5722;
   --travel-primary-light: #FF8A65;
   --travel-primary-dark: #E64A19;
+  --travel-secondary: #4CAF50;
+  --travel-accent: #2196F3;
   --travel-text-dark: #333;
   --travel-text-light: #666;
   --travel-white: #fff;
   --travel-off-white: #f9f9f9;
-  --travel-shadow: 0 4px 12px rgba(255, 87, 34, 0.2);
+  --travel-light-gray: #eaeaea;
+  --travel-medium-gray: #cccccc;
+  --travel-error: #f44336;
+  --travel-success: #4CAF50;
+  --travel-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  --travel-shadow-light: 0 2px 8px rgba(0, 0, 0, 0.05);
   --travel-transition: all 0.3s ease;
+  --travel-border-radius: 12px;
 }
 
+/* ================== Base Layout ================== */
 .travel-auth-body {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: var(--travel-off-white);
   margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-} 
-
-.travel-auth-wrapper {
+  padding: 20px;
+  font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   position: relative;
-  width: 1100px;
-  max-width: 95%;
-  height: 650px;
-  max-height: 90vh;
-  background: var(--travel-white);
-  border-radius: 15px;
   overflow: hidden;
-  box-shadow: var(--travel-shadow);
-  display: flex;
 }
 
-/* Forms Section */
-.travel-forms-section {
+.travel-auth-background {
   position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  display: flex;
+  z-index: -1;
 }
 
-.travel-form-container {
-  width: 50%;
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  transition: transform 0.8s cubic-bezier(0.77,0,0.175,1), opacity 0.5s ease;
-  overflow-y: auto;
-}
-
-.travel-form-container h2 {
-  color: var(--travel-primary);
-  font-size: 2rem;
-  margin-bottom: 30px;
-  text-align: center;
-}
-
-/* Form Elements */
-.travel-auth-form {
-  /* overflow: hidden; */
+.travel-auth-background-images {
+  position: relative;
   width: 100%;
-  max-width: 350px;
-  margin: 0 auto;
+  height: 100%;
+}
+
+.travel-auth-bg-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.travel-auth-bg-image.active {
+  opacity: 1;
+}
+
+.travel-auth-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 100%);
+}
+
+.travel-auth-container {
+  width: 100%;
+  max-width: 420px;
   display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.travel-auth-card {
+  background: var(--travel-white);
+  border-radius: var(--travel-border-radius);
+  box-shadow: var(--travel-shadow);
+  width: 100%;
+  overflow: hidden;
+  transition: var(--travel-transition);
+}
+
+.travel-auth-header {
+  padding: 30px 30px 20px;
+  text-align: center;
+  background: linear-gradient(135deg, var(--travel-primary) 0%, var(--travel-primary-dark) 100%);
+  color: var(--travel-white);
+}
+
+.travel-auth-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.travel-auth-logo i {
+  margin-right: 10px;
+  font-size: 28px;
+}
+
+.travel-auth-header h2 {
+  margin: 0 0 10px;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.travel-auth-header p {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 14px;
+}
+
+.travel-auth-forms {
+  position: relative;
+  min-height: 500px;
+}
+
+.travel-auth-form {
+  padding: 30px;
+  display: none;
   flex-direction: column;
-  gap: 15px; /* This adds consistent spacing between all form elements */
+}
+
+.travel-auth-form.active {
+  display: flex;
+}
+
+.travel-form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
 }
 
 .travel-form-group {
   margin-bottom: 20px;
   width: 100%;
+  position: relative;
 }
 
-.travel-auth-form input, 
+.travel-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.travel-input-container i {
+  position: absolute;
+  left: 15px;
+  color: var(--travel-medium-gray);
+  z-index: 1;
+}
+
+.travel-auth-form input,
 .travel-auth-form select {
   width: 100%;
-  padding: 10px 12px; /* Slightly larger padding for better touch targets */
-  border: 1px solid #ddd;
+  padding: 12px 15px 12px 45px;
+  border: 1px solid var(--travel-light-gray);
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 14px;
   background: var(--travel-off-white);
   transition: var(--travel-transition);
   box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
-.travel-auth-form input:focus, 
+.travel-auth-form input:focus,
 .travel-auth-form select:focus {
   border-color: var(--travel-primary);
   box-shadow: 0 0 0 2px rgba(255, 87, 34, 0.2);
   outline: none;
 }
 
-.travel-auth-form button {
+.travel-auth-form input.error,
+.travel-auth-form select.error {
+  border-color: var(--travel-error);
+}
+
+.travel-error {
+  color: var(--travel-error);
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
+
+.travel-form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.travel-checkbox {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: var(--travel-text-light);
+  cursor: pointer;
+}
+
+.travel-checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkmark {
+  height: 18px;
+  width: 18px;
+  background-color: var(--travel-off-white);
+  border: 1px solid var(--travel-light-gray);
+  border-radius: 4px;
+  margin-right: 8px;
+  position: relative;
+  transition: var(--travel-transition);
+}
+
+.travel-checkbox input:checked ~ .checkmark {
+  background-color: var(--travel-primary);
+  border-color: var(--travel-primary);
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.travel-checkbox input:checked ~ .checkmark:after {
+  display: block;
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.travel-forgot-link {
+  color: var(--travel-primary);
+  text-decoration: none;
+  font-size: 14px;
+  transition: var(--travel-transition);
+}
+
+.travel-forgot-link:hover {
+  text-decoration: underline;
+}
+
+.travel-auth-btn {
   width: 100%;
-  padding: 12px;
-  margin-top: 0px;
+  padding: 14px;
   background: var(--travel-primary);
   color: var(--travel-white);
   border: none;
@@ -105,187 +269,170 @@
   font-weight: 600;
   cursor: pointer;
   transition: var(--travel-transition);
+  font-size: 16px;
+  position: relative;
+  height: 48px;
+  margin-bottom: 20px;
+  font-family: 'Poppins', sans-serif;
 }
 
-.travel-auth-form button:hover {
+.travel-auth-btn:hover:not(:disabled) {
   background: var(--travel-primary-dark);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 87, 34, 0.3);
+}
+
+.travel-auth-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.travel-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid var(--travel-white);
+  border-radius: 50%;
+  animation: travelSpin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes travelSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.travel-auth-switch {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.travel-auth-switch p {
+  margin: 0;
+  color: var(--travel-text-light);
+  font-size: 14px;
+}
+
+.travel-auth-switch span {
+  color: var(--travel-primary);
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--travel-transition);
+}
+
+.travel-auth-switch span:hover {
+  text-decoration: underline;
+}
+
+/* ================== Responsive Design ================== */
+
+/* Tablets */
+@media (max-width: 768px) {
+  .travel-auth-body {
+    padding: 15px;
+  }
+  
+  .travel-auth-card {
+    max-width: 400px;
+  }
+  
+  .travel-form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+/* Phones */
+@media (max-width: 480px) {
+  .travel-auth-body {
+    padding: 10px;
+  }
+  
+  .travel-auth-header {
+    padding: 25px 20px 15px;
+  }
+  
+  .travel-auth-form {
+    padding: 25px 20px;
+  }
+  
+  .travel-auth-header h2 {
+    font-size: 22px;
+  }
+}
+
+/* Small phones */
+@media (max-width: 360px) {
+  .travel-auth-header {
+    padding: 20px 15px 15px;
+  }
+  
+  .travel-auth-form {
+    padding: 20px 15px;
+  }
+  
+  .travel-auth-header h2 {
+    font-size: 20px;
+  }
+  
+  .travel-auth-logo {
+    font-size: 20px;
+  }
+  
+  .travel-auth-logo i {
+    font-size: 24px;
+  }
 }
 
 
-.travel-register-form .travel-auth-form {
-  gap: 15px; /* Slightly smaller gap for register form to fit more fields */
-}
-
-.travel-register-form .travel-auth-form button {
-  margin-top: 15px;
-}
-
-/* Slider Panel */
-.travel-slider-panel {
-  position: absolute;
-  right: 0;
-  width: 50%;
-  height: 100%;
-  color: var(--travel-white);
+/* ================== Forgot Password Styles ================== */
+.travel-forgot-form {
+  padding: 30px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+}
+
+.travel-success-message {
+  padding: 30px;
   text-align: center;
-  padding: 40px;
-  z-index: 2;
-  overflow: hidden;
-  transition: transform 0.8s cubic-bezier(0.77,0,0.175,1);
-}
-
-.travel-slide-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 400%;
-  height: 100%;
   display: flex;
-  transition: transform 1s ease;
+  flex-direction: column;
+  align-items: center;
 }
 
-.travel-slide-container img {
-  width: 25%;
-  height: 100%;
-  object-fit: cover;
-  filter: brightness(0.7) contrast(1.1);
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
-}
-
-.travel-slider-panel::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, 
-    rgba(0, 0, 0, 0.6) 0%, 
-    rgba(0, 0, 0, 0.4) 50%, 
-    rgba(0, 0, 0, 0.3) 100%);
-  z-index: -1;
-}
-
-.travel-slider-content {
-  max-width: 80%;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
-  z-index: 3;
-}
-
-.travel-slider-panel h2 {
-  font-size: 2rem;
+.travel-success-icon {
+  font-size: 64px;
+  color: var(--travel-success);
   margin-bottom: 20px;
 }
 
-.travel-slider-panel p {
-  margin-bottom: 30px;
-  font-size: 1.1rem;
-  line-height: 1.6;
+.travel-success-message h3 {
+  color: var(--travel-text-dark);
+  margin-bottom: 15px;
+  font-size: 24px;
 }
 
-.travel-slider-panel button {
-  background: transparent;
-  border: 2px solid var(--travel-white);
-  color: var(--travel-white);
-  padding: 12px 30px;
-  border-radius: 30px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--travel-transition);
-  backdrop-filter: blur(8px);
-  font-size: 1rem;
+.travel-success-message p {
+  color: var(--travel-text-light);
+  margin-bottom: 25px;
+  line-height: 1.5;
 }
 
-.travel-slider-panel button:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: scale(1.05);
-}
-
-/* Animations and Transitions */
-.travel-auth-wrapper.register-mode .travel-login-form {
-  transform: translateX(-100%);
-  opacity: 0;
-}
-
-.travel-auth-wrapper.register-mode .travel-register-form {
-  transform: translateX(0);
-  opacity: 1;
-}
-
-.travel-auth-wrapper:not(.register-mode) .travel-register-form {
-  transform: translateX(100%);
-  opacity: 0;
-}
-
-.travel-auth-wrapper.register-mode .travel-slider-panel {
-  transform: translateX(-100%);
-}
-
-/* Form Field Animations */
-.travel-auth-wrapper.reveal-complete .travel-auth-form input,
-.travel-auth-wrapper.reveal-complete .travel-auth-form select,
-.travel-auth-wrapper.reveal-complete .travel-auth-form button {
-  animation: travelFadeInUp 0.6s forwards;
-}
-
-@keyframes travelFadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .travel-auth-wrapper {
-    flex-direction: column;
-    height: auto;
+/* Responsive adjustments for forgot password */
+@media (max-width: 480px) {
+  .travel-forgot-form {
+    padding: 25px 20px;
   }
   
-  .travel-form-container, .travel-slider-panel {
-    position: relative;
-    width: 100%;
-    height: auto;
+  .travel-success-message {
+    padding: 25px 20px;
   }
   
-  .travel-slider-panel {
-    padding: 30px 20px;
-    order: -1;
-    height: 250px;
+  .travel-success-icon {
+    font-size: 48px;
   }
   
-  .travel-form-container {
-    padding: 30px 20px;
-  }
-  
-  .travel-auth-wrapper.register-mode .travel-login-form,
-  .travel-auth-wrapper.register-mode .travel-register-form,
-  .travel-auth-wrapper:not(.register-mode) .travel-register-form {
-    transform: none;
-  }
-  
-  .travel-slide-container img {
-    height: 250px;
-  }
-
-  .travel-auth-wrapper.register-mode .travel-slider-panel {
-    transform: none;
-  }
-}
-
-@media (max-height: 700px) {
-  .travel-form-container {
-    padding: 20px;
-    overflow-y: auto;
-    max-height: 80vh;
+  .travel-success-message h3 {
+    font-size: 20px;
   }
 }

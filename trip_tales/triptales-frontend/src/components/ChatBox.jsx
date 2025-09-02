@@ -1,61 +1,48 @@
 import React, { useEffect, useState, useRef } from "react";
-import axios from "axios";
 import { 
   connectSocket, 
   joinChat, 
   sendMessage, 
   receiveMessage, 
-  disconnectSocket,
-  removeAllListeners
+  getChatHistory,
+  disconnectSocket 
 } from "./chatSocket";
 
 function ChatBox({ chatId, userId }) {
   const [messages, setMessages] = useState([]);
   const [body, setBody] = useState("");
-  const [loading, setLoading] = useState(true);
   const messagesEndRef = useRef(null);
 
-  useEffect(() => {
-    if (!chatId || !userId) return;
+ useEffect(() => {
+  if (!chatId || !userId) return;
 
-    // Load existing messages from database first
-    const loadMessages = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:5000/api/chats/${chatId}/messages?userId=${userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        setMessages(response.data.messages);
-        scrollToBottom();
-      } catch (err) {
-        console.error("Failed to load messages", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Initialize socket connection
+  connectSocket(userId);
+  
+  // Join chat room
+  joinChat(chatId, userId);
+  
+  // Set up message listeners
+  const handleHistory = (history) => {
+    setMessages(history);
+    scrollToBottom();
+  };
+  
+  const handleMessage = (message) => {
+    setMessages((prev) => [...prev, message]);
+    scrollToBottom();
+  };
 
-    loadMessages();
+  getChatHistory(handleHistory);
+  receiveMessage(handleMessage);
 
-    // Then set up socket connection for real-time messages
-    connectSocket(userId);
-    joinChat(chatId, userId);
-    
-    const handleMessage = (message) => {
-      setMessages((prev) => [...prev, message]);
-      scrollToBottom();
-    };
-
-    receiveMessage(handleMessage);
-
-    return () => {
-      removeAllListeners();
-      disconnectSocket();
-    };
-  }, [chatId, userId]);
+  return () => {
+    // Clean up listeners
+    socket.off("chatHistory", handleHistory);
+    socket.off("receiveMessage", handleMessage);
+    disconnectSocket();
+  };
+}, [chatId, userId]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -63,22 +50,7 @@ function ChatBox({ chatId, userId }) {
 
   const handleSend = () => {
     if (!body.trim()) return;
-    
-    // Send via HTTP first to ensure persistence
-    axios.post(
-      `http://localhost:5000/api/chats/${chatId}/messages`,
-      { sender_id: userId, body },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    ).catch(err => {
-      console.error("Failed to send message via HTTP", err);
-      // Fallback to socket if HTTP fails
-      sendMessage(chatId, userId, body);
-    });
-    
+    sendMessage(chatId, userId, body);
     setBody("");
   };
 
@@ -87,10 +59,6 @@ function ChatBox({ chatId, userId }) {
       handleSend();
     }
   };
-
-  if (loading) {
-    return <div className="loading-messages">Loading messages...</div>;
-  }
 
   return (
     <div className="chat-container">

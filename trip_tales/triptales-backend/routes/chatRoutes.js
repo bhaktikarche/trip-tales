@@ -8,16 +8,8 @@ const router = express.Router();
 router.post("/init", async (req, res) => {
   try {
     const { postId, userId } = req.body;
-
-    // ✅ Check if user is blocked
-    const [userRows] = await db.query("SELECT is_blocked FROM users WHERE id = ?", [userId]);
-    if (userRows.length === 0) {
-      return res.status(404).json({ error: "User not found" });
-    }
-    if (userRows[0].is_blocked) {
-      return res.status(403).json({ error: "You are blocked by admin. Cannot start chat." });
-    }
-
+    
+    // Check if chat exists
     const [existingChat] = await db.query(
       "SELECT id FROM chats WHERE post_id = ?",
       [postId]
@@ -27,12 +19,14 @@ router.post("/init", async (req, res) => {
     if (existingChat.length > 0) {
       chatId = existingChat[0].id;
     } else {
+      // Create new chat
       const [result] = await db.query(
         "INSERT INTO chats (post_id) VALUES (?)",
         [postId]
       );
       chatId = result.insertId;
-
+      
+      // Add post owner as participant
       const [post] = await db.query(
         "SELECT user_id FROM posts WHERE id = ?",
         [postId]
@@ -45,6 +39,7 @@ router.post("/init", async (req, res) => {
       }
     }
 
+    // Add current user as participant if not already
     const [existingParticipant] = await db.query(
       "SELECT 1 FROM chat_participants WHERE chat_id = ? AND user_id = ?",
       [chatId, userId]
@@ -56,17 +51,7 @@ router.post("/init", async (req, res) => {
       );
     }
 
-    // ✅ Get other user information (post owner)
-    const [otherUserRows] = await db.query(`
-      SELECT u.id, u.name, u.username 
-      FROM posts p 
-      JOIN users u ON u.id = p.user_id 
-      WHERE p.id = ?
-    `, [postId]);
-
-    const otherUser = otherUserRows.length > 0 ? otherUserRows[0] : null;
-
-    res.json({ chatId, otherUser });
+    res.json({ chatId });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to initialize chat" });
@@ -83,34 +68,25 @@ router.get("/conversations", async (req, res) => {
     }
 
     const [conversations] = await db.query(`
-      SELECT 
-        c.id,
-        c.post_id,
-        p.title AS post_title,
-        ANY_VALUE(u.id) AS other_user_id,
-        ANY_VALUE(u.username) AS other_user_username,
-        ANY_VALUE(u.name) AS other_user_name,
-        (SELECT body 
-         FROM messages 
-         WHERE chat_id = c.id 
-         ORDER BY created_at DESC LIMIT 1) AS last_body,
-        (SELECT COUNT(*) 
-         FROM messages m 
-         WHERE m.chat_id = c.id 
-           AND m.sender_id != ? 
-           AND (m.created_at > cp.last_seen OR cp.last_seen IS NULL)
-        ) AS my_unread
-      FROM chat_participants cp
-      JOIN chats c ON c.id = cp.chat_id
-      JOIN posts p ON p.id = c.post_id
-      JOIN chat_participants cp2 ON cp2.chat_id = c.id AND cp2.user_id != ?
-      JOIN users u ON u.id = cp2.user_id
-      WHERE cp.user_id = ?
-      GROUP BY c.id, c.post_id, p.title
-      ORDER BY (SELECT MAX(created_at) 
-                FROM messages 
-                WHERE chat_id = c.id) DESC
-    `, [userId, userId, userId]);
+  SELECT 
+    c.id,
+    c.post_id,
+    ANY_VALUE(p.title) as post_title,
+    ANY_VALUE(u.id) as other_user_id,
+    ANY_VALUE(u.username) as other_user_username,
+    (SELECT body FROM messages WHERE chat_id = c.id ORDER BY created_at DESC LIMIT 1) as last_body,
+    (SELECT COUNT(*) FROM messages m 
+     WHERE m.chat_id = c.id AND m.sender_id != ? AND 
+     (m.created_at > cp.last_seen OR cp.last_seen IS NULL)) as my_unread
+  FROM chat_participants cp
+  JOIN chats c ON c.id = cp.chat_id
+  JOIN posts p ON p.id = c.post_id
+  JOIN chat_participants cp2 ON cp2.chat_id = c.id AND cp2.user_id != ?
+  JOIN users u ON u.id = cp2.user_id
+  WHERE cp.user_id = ?
+  GROUP BY c.id
+  ORDER BY (SELECT MAX(created_at) FROM messages WHERE chat_id = c.id) DESC
+`, [userId, userId, userId]);
 
     res.json({ conversations });
   } catch (err) {
@@ -118,7 +94,6 @@ router.get("/conversations", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch conversations" });
   }
 });
-
 
 // Get messages for a chat - FIXED ENDPOINT
 router.get("/:chatId/messages", async (req, res) => {
@@ -162,15 +137,6 @@ router.post("/:chatId/messages", async (req, res) => {
       return res.status(400).json({ error: "sender_id and body required" });
     }
 
-    // ✅ Check if user is blocked
-    const [userRows] = await db.query("SELECT is_blocked FROM users WHERE id = ?", [sender_id]);
-    if (userRows.length === 0) {
-      return res.status(404).json({ error: "User not found" });
-    }
-    if (userRows[0].is_blocked) {
-      return res.status(403).json({ error: "You are blocked by admin. Cannot send messages." });
-    }
-
     const [result] = await db.query(
       "INSERT INTO messages (chat_id, sender_id, body) VALUES (?, ?, ?)",
       [chatId, sender_id, body]
@@ -186,6 +152,7 @@ router.post("/:chatId/messages", async (req, res) => {
 
     const message = rows[0];
 
+    // Broadcast via Socket.IO
     io.to(`chat_${chatId}`).emit("receiveMessage", message);
 
     res.status(201).json({ message });
