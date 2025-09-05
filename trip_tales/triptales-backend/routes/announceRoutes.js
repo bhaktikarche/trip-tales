@@ -1,5 +1,10 @@
 import express from "express";
-import { getAnnouncements, createAnnouncement, deleteAnnouncement,markAnnouncementSeen } from "../controllers/announcementController.js";
+import {
+  getAnnouncements,
+  createAnnouncement,
+  deleteAnnouncement,
+  markAnnouncementSeen,
+} from "../controllers/announcementController.js";
 import { authenticateToken } from "../Middleware/auth.js";
 
 const router = express.Router();

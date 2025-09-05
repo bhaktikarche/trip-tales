@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./AdminAnnouncements.css"; // Make sure to import the CSS
+import { Link } from "react-router-dom";
 
 function AdminAnnouncements() {
   const [announcements, setAnnouncements] = useState([]);
@@ -29,7 +30,9 @@ function AdminAnnouncements() {
       await axios.post(
         "http://localhost:5000/api/announcements",
         { title, message },
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
       );
       setTitle("");
       setMessage("");
@@ -52,7 +55,13 @@ function AdminAnnouncements() {
 
   return (
     <div className="admin-announcements-container">
-      <h2>Manage Announcements</h2>
+      <div className="head">
+        <h2>Manage Announcements</h2>
+
+        <Link to="/admindashboard" className="tt-create-trip-btn">
+          ⬅ Back to Dashboard
+        </Link>
+      </div>
       <input
         value={title}
         onChange={(e) => setTitle(e.target.value)}
@@ -68,14 +77,12 @@ function AdminAnnouncements() {
       <h3>All Announcements</h3>
       <ul>
         {announcements.map((a) => {
-          const isNew =
-            (new Date() - new Date(a.date)) / (1000 * 60 * 60) < 24; // within 24 hours
+          const isNew = (new Date() - new Date(a.date)) / (1000 * 60 * 60) < 24; // within 24 hours
           return (
             <li key={a.id} className={isNew ? "new-announcement" : ""}>
               <div className="announcement-info">
                 <strong>{a.title}</strong>
-                {isNew && <span className="new-badge">New</span>} -{" "}
-                {a.message}
+                {isNew && <span className="new-badge">New</span>} - {a.message}
                 <small> ({new Date(a.date).toLocaleString()})</small>
               </div>
               <button onClick={() => handleDelete(a.id)}>Delete</button>

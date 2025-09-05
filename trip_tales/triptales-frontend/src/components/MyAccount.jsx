@@ -7,7 +7,7 @@ import {
   FaStar,
   FaEdit,
   FaPlus,
-    FaComments
+  FaComments,
 } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { Modal } from "react-bootstrap";
@@ -43,24 +43,23 @@ function MyAccount() {
   const navigate = useNavigate();
 
   // Fetch conversations
-useEffect(() => {
-  if (!user?.id) return;
+  useEffect(() => {
+    if (!user?.id) return;
 
-  const fetchConversations = async () => {
-    try {
-      const res = await axios.get(
-        `http://localhost:5000/api/chats/conversations?userId=${user.id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setConversations(res.data.conversations || []);
-    } catch (error) {
-      console.error("Failed to fetch conversations", error);
-    }
-  };
+    const fetchConversations = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:5000/api/chats/conversations?userId=${user.id}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setConversations(res.data.conversations || []);
+      } catch (error) {
+        console.error("Failed to fetch conversations", error);
+      }
+    };
 
-  fetchConversations();
-}, [user?.id, token]);
-
+    fetchConversations();
+  }, [user?.id, token]);
 
   // Fetch user info and posts
   useEffect(() => {

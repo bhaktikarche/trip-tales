@@ -1,6 +1,6 @@
 // src/context/UserContext.js
-import { createContext, useContext, useEffect, useState } from 'react';
-import axios from 'axios';
+import { createContext, useContext, useEffect, useState } from "react";
+import axios from "axios";
 
 const UserContext = createContext();
 
@@ -9,15 +9,15 @@ export const UserProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) return;
 
-      const res = await axios.get('/api/auth/me', {
+      const res = await axios.get("/api/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUser(res.data);
     } catch (err) {
-      console.error('Failed to fetch user', err);
+      console.error("Failed to fetch user", err);
       setUser(null);
     }
   };
@@ -26,7 +26,11 @@ export const UserProvider = ({ children }) => {
     fetchUser();
   }, []);
 
-  return <UserContext.Provider value={{ user, setUser }}>{children}</UserContext.Provider>;
+  return (
+    <UserContext.Provider value={{ user, setUser }}>
+      {children}
+    </UserContext.Provider>
+  );
 };
 
 export const useUser = () => useContext(UserContext);

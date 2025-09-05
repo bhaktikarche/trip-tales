@@ -28,8 +28,10 @@ function App() {
         <Route path="/admin/announcements" element={<AdminAnnouncements />} />
         <Route path="/admin/view-feedbacks" element={<ViewFeedbacks />} />
         <Route path="/chat/:postId" element={<ChatPage />} />
-        <Route path="/admin/chat-management" element={<AdminChatManagement />} />
-
+        <Route
+          path="/admin/chat-management"
+          element={<AdminChatManagement />}
+        />
       </Routes>
       <ToastContainer position="top-right" autoClose={3000} />
     </>

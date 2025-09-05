@@ -3,7 +3,6 @@ import db from "../config/db.js"; // adjust path to your DB connection
 
 const router = express.Router();
 
-
 // to console check
 
 const fetchFeedbacks = async () => {
@@ -27,19 +26,18 @@ router.get("/all", async (req, res) => {
        JOIN users u ON ue.user_id = u.id
        ORDER BY ue.created_at DESC`
     );
-    
+
     // Ensure each feedback has both name and username properties
-    const formattedFeedbacks = rows.map(row => ({
+    const formattedFeedbacks = rows.map((row) => ({
       ...row,
-      username: row.username || row.name // Use name if username is missing
+      username: row.username || row.name, // Use name if username is missing
     }));
-    
+
     res.json(formattedFeedbacks);
   } catch (error) {
     console.error("Error fetching feedbacks:", error);
     res.status(500).json({ error: "Failed to fetch feedbacks" });
   }
 });
-
 
 export default router;

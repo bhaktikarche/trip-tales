@@ -1,13 +1,13 @@
-import express from 'express';
-import db from '../config/db.js';
+import express from "express";
+import db from "../config/db.js";
 
 const router = express.Router();
 
-router.post('/toggle', async (req, res) => {
+router.post("/toggle", async (req, res) => {
   const { postId, userId } = req.body;
 
   if (!postId || !userId) {
-    return res.status(400).json({ message: 'Missing fields' });
+    return res.status(400).json({ message: "Missing fields" });
   }
 
   try {
@@ -18,24 +18,30 @@ router.post('/toggle', async (req, res) => {
 
     if (existing.length > 0) {
       // Already bookmarked -> remove
-      await db.query(`DELETE FROM bookmarks WHERE post_id = ? AND user_id = ?`, [postId, userId]);
-      res.json({ postId, bookmarked: false, message: 'Bookmark removed' });
+      await db.query(
+        `DELETE FROM bookmarks WHERE post_id = ? AND user_id = ?`,
+        [postId, userId]
+      );
+      res.json({ postId, bookmarked: false, message: "Bookmark removed" });
     } else {
       // Not bookmarked yet -> insert
-      await db.query(`INSERT INTO bookmarks (post_id, user_id) VALUES (?, ?)`, [postId, userId]);
-      res.json({ postId, bookmarked: true, message: 'Bookmarked' });
+      await db.query(`INSERT INTO bookmarks (post_id, user_id) VALUES (?, ?)`, [
+        postId,
+        userId,
+      ]);
+      res.json({ postId, bookmarked: true, message: "Bookmarked" });
     }
   } catch (err) {
-    console.error('Bookmark toggle error:', err);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Bookmark toggle error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const { userId } = req.query;
     if (!userId) {
-      return res.status(400).json({ message: 'Missing userId' });
+      return res.status(400).json({ message: "Missing userId" });
     }
 
     // Get full post details for bookmarked posts
@@ -49,11 +55,9 @@ router.get('/', async (req, res) => {
 
     res.json(bookmarkedPosts);
   } catch (err) {
-    console.error('Get bookmarks error:', err);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Get bookmarks error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
-
 export default router;
-

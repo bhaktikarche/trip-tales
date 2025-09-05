@@ -4,6 +4,7 @@ import axios from "axios";
 import { Button, Badge } from "react-bootstrap";
 import { toast } from "react-toastify";
 import "./ViewFeedbacks.css";
+import { Link } from "react-router-dom";
 
 function ViewFeedbacks() {
   const [feedbacks, setFeedbacks] = useState([]);
@@ -12,7 +13,8 @@ function ViewFeedbacks() {
 
   // Load about feedbacks from localStorage on component mount
   useEffect(() => {
-    const savedFeedbacks = JSON.parse(localStorage.getItem("aboutFeedbacks")) || [];
+    const savedFeedbacks =
+      JSON.parse(localStorage.getItem("aboutFeedbacks")) || [];
     setAboutFeedbacks(savedFeedbacks);
   }, []);
 
@@ -20,9 +22,9 @@ function ViewFeedbacks() {
     try {
       const res = await axios.get("http://localhost:5000/api/feedback/all");
       // Map the response to ensure we have username property
-      const formattedFeedbacks = res.data.map(fb => ({
+      const formattedFeedbacks = res.data.map((fb) => ({
         ...fb,
-        username: fb.username || fb.name // Use name if username doesn't exist
+        username: fb.username || fb.name, // Use name if username doesn't exist
       }));
       setFeedbacks(formattedFeedbacks);
     } catch (err) {
@@ -36,14 +38,15 @@ function ViewFeedbacks() {
   }, [fetchFeedbacks]);
 
   const handleAddToAbout = (feedback) => {
-    const savedFeedbacks = JSON.parse(localStorage.getItem("aboutFeedbacks")) || [];
-    
+    const savedFeedbacks =
+      JSON.parse(localStorage.getItem("aboutFeedbacks")) || [];
+
     // Check if feedback already exists in about section
-    if (savedFeedbacks.some(fb => fb.id === feedback.id)) {
+    if (savedFeedbacks.some((fb) => fb.id === feedback.id)) {
       toast.warning("This feedback is already in the About Section!");
       return;
     }
-    
+
     const updatedFeedbacks = [...savedFeedbacks, feedback];
     localStorage.setItem("aboutFeedbacks", JSON.stringify(updatedFeedbacks));
     setAboutFeedbacks(updatedFeedbacks);
@@ -52,22 +55,30 @@ function ViewFeedbacks() {
   };
 
   const handleRemoveFromAbout = (feedbackId) => {
-    const updatedFeedbacks = aboutFeedbacks.filter(fb => fb.id !== feedbackId);
+    const updatedFeedbacks = aboutFeedbacks.filter(
+      (fb) => fb.id !== feedbackId
+    );
     localStorage.setItem("aboutFeedbacks", JSON.stringify(updatedFeedbacks));
     setAboutFeedbacks(updatedFeedbacks);
     toast.success("Feedback removed from About Section!");
   };
 
   const isInAboutSection = (feedbackId) => {
-    return aboutFeedbacks.some(fb => fb.id === feedbackId);
+    return aboutFeedbacks.some((fb) => fb.id === feedbackId);
   };
 
   return (
     <div className="container py-4">
-      <h2 className="mb-4">👁 User Feedbacks</h2>
-      
+      <div className="head">
+        <h2 className="mb-4">👁 User Feedbacks</h2>
+
+        <Link to="/admindashboard" className="tt-create-trip-btn">
+          ⬅ Back to Dashboard
+        </Link>
+      </div>
       <div className="alert alert-info">
-        <strong>About Section Status:</strong> {aboutFeedbacks.length} feedback(s) currently displayed on landing page
+        <strong>About Section Status:</strong> {aboutFeedbacks.length}{" "}
+        feedback(s) currently displayed on landing page
       </div>
 
       <table className="table table-bordered table-hover">
@@ -94,8 +105,8 @@ function ViewFeedbacks() {
                 )}
               </td>
               <td>
-                <Button 
-                  variant="primary" 
+                <Button
+                  variant="primary"
                   size="sm"
                   onClick={() => setSelectedFeedback(fb)}
                   className="me-2"
@@ -103,16 +114,16 @@ function ViewFeedbacks() {
                   View
                 </Button>
                 {isInAboutSection(fb.id) ? (
-                  <Button 
-                    variant="danger" 
+                  <Button
+                    variant="danger"
                     size="sm"
                     onClick={() => handleRemoveFromAbout(fb.id)}
                   >
                     Remove
                   </Button>
                 ) : (
-                  <Button 
-                    variant="success" 
+                  <Button
+                    variant="success"
                     size="sm"
                     onClick={() => handleAddToAbout(fb)}
                   >
@@ -134,7 +145,10 @@ function ViewFeedbacks() {
 
       {/* Feedback Popup */}
       {selectedFeedback && (
-        <div className="popup-overlay" onClick={() => setSelectedFeedback(null)}>
+        <div
+          className="popup-overlay"
+          onClick={() => setSelectedFeedback(null)}
+        >
           <div className="popup-card" onClick={(e) => e.stopPropagation()}>
             <button
               className="popup-close"

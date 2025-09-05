@@ -1,4 +1,3 @@
-
 import db from "../config/db.js";
 import { v4 as uuidv4 } from "uuid";
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -10,33 +9,36 @@ export const generateSummary = async (req, res) => {
   const { postId } = req.params;
 
   try {
-    const [postRows] = await db.query(`
+    const [postRows] = await db.query(
+      `
       SELECT p.*, GROUP_CONCAT(pi.image_url) AS images
       FROM posts p
       LEFT JOIN post_images pi ON pi.post_id = p.id
       WHERE p.id = ?
       GROUP BY p.id
-    `, [postId]);
+    `,
+      [postId]
+    );
 
-    if (!postRows.length) return res.status(404).json({ message: 'Post not found' });
+    if (!postRows.length)
+      return res.status(404).json({ message: "Post not found" });
 
     const post = postRows[0];
-    const images = post.images ? post.images.split(',') : [];
+    const images = post.images ? post.images.split(",") : [];
 
     // 🧠 Build AI prompt
     const prompt = `
 Create a short 2–3 sentence travel summary from this trip data:
 - Title: ${post.title}
 - Location: ${post.location_name}
-- Duration: ${post.duration_days || 'N/A'} days
+- Duration: ${post.duration_days || "N/A"} days
 - Budget: ₹${post.budget}
 - Experience: ${post.experience}
 
 Focus on: hotel quality, food, views, activities — and summarize nicely.
 `;
 
-const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
-
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
@@ -50,7 +52,7 @@ const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
     await db.query(
       `INSERT INTO experience_summary (post_id, summary_text, generated_link, status)
        VALUES (?, ?, ?, ?)`,
-      [postId, summary, shortId, 'Active']
+      [postId, summary, shortId, "Active"]
     );
 
     // ✅ Respond to frontend
@@ -59,18 +61,16 @@ const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
       summary,
       link: `http://localhost:5173/summary/${shortId}`,
       shortId,
-      mainImages: images.slice(0, 2)
+      mainImages: images.slice(0, 2),
     });
-
   } catch (err) {
     console.error("Gemini API error:", err);
     res.status(500).json({ message: "Summary generation failed" });
   }
 };
 
-
 export const getSummaryById = async (req, res) => {
-  const { id } = req.params;  // id here means generated_link
+  const { id } = req.params; // id here means generated_link
 
   try {
     const [rows] = await db.query(
@@ -81,7 +81,8 @@ export const getSummaryById = async (req, res) => {
       [id]
     );
 
-    if (!rows.length) return res.status(404).json({ message: "Summary not found" });
+    if (!rows.length)
+      return res.status(404).json({ message: "Summary not found" });
 
     res.status(200).json(rows[0]);
   } catch (err) {
@@ -89,4 +90,3 @@ export const getSummaryById = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch summary" });
   }
 };
-

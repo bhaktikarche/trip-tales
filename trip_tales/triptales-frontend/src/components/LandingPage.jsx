@@ -10,7 +10,6 @@ import {
   FiChevronRight,
 } from "react-icons/fi";
 
-
 // Image data
 const carouselImages = [
   {
@@ -54,7 +53,6 @@ const features = [
   },
 ];
 
-
 // Feature Card Component
 const FeatureCard = ({ icon, title, description, index }) => {
   return (
@@ -73,58 +71,56 @@ const FeatureCard = ({ icon, title, description, index }) => {
   );
 };
 
-
-
 // Main Landing Page Component
 const LandingPage = () => {
   const [navSolid, setNavSolid] = useState(false);
   const [carouselIndex, setCarouselIndex] = useState(0);
-   //const [aboutFeedback, setAboutFeedback] = useState(null);
+  //const [aboutFeedback, setAboutFeedback] = useState(null);
   const [feedbackIndex, setFeedbackIndex] = useState(0);
   const [feedbacks, setFeedbacks] = useState([]);
-useEffect(() => {
-  const carouselInterval = setInterval(() => {
-    setCarouselIndex((prev) => (prev + 1) % carouselImages.length);
-  }, 3000);
+  useEffect(() => {
+    const carouselInterval = setInterval(() => {
+      setCarouselIndex((prev) => (prev + 1) % carouselImages.length);
+    }, 3000);
 
-  // Load feedbacks from localStorage
-  try {
-    const savedFeedbacks = localStorage.getItem("aboutFeedbacks");
-    if (savedFeedbacks) {
-      const parsedFeedbacks = JSON.parse(savedFeedbacks);
-      // Ensure each feedback has a username property
-      const formattedFeedbacks = parsedFeedbacks.map(fb => ({
-        ...fb,
-        username: fb.username || fb.name || "User"
-      }));
-      setFeedbacks(formattedFeedbacks);
+    // Load feedbacks from localStorage
+    try {
+      const savedFeedbacks = localStorage.getItem("aboutFeedbacks");
+      if (savedFeedbacks) {
+        const parsedFeedbacks = JSON.parse(savedFeedbacks);
+        // Ensure each feedback has a username property
+        const formattedFeedbacks = parsedFeedbacks.map((fb) => ({
+          ...fb,
+          username: fb.username || fb.name || "User",
+        }));
+        setFeedbacks(formattedFeedbacks);
+      }
+    } catch (error) {
+      console.error("Error loading feedbacks from localStorage:", error);
     }
-  } catch (error) {
-    console.error("Error loading feedbacks from localStorage:", error);
-  }
 
-  const onScroll = () => {
-    setNavSolid(window.scrollY > 50);
-  };
-  window.addEventListener("scroll", onScroll);
+    const onScroll = () => {
+      setNavSolid(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", onScroll);
 
-  return () => {
-    clearInterval(carouselInterval);
-    window.removeEventListener("scroll", onScroll);
-  };
-}, []);
+    return () => {
+      clearInterval(carouselInterval);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
 
-// Move feedback carousel every 4 seconds
+  // Move feedback carousel every 4 seconds
   // Auto-rotate feedbacks every 5 seconds
-useEffect(() => {
-  if (feedbacks.length <= 1) return;
-  
-  const interval = setInterval(() => {
-    setFeedbackIndex((prev) => (prev + 1) % feedbacks.length);
-  }, 5000);
-  
-  return () => clearInterval(interval);
-}, [feedbacks.length]);
+  useEffect(() => {
+    if (feedbacks.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setFeedbackIndex((prev) => (prev + 1) % feedbacks.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [feedbacks.length]);
 
   const getVisibleImages = () => {
     const visible = [];
@@ -207,487 +203,526 @@ useEffect(() => {
         </h2>
         <div className="features-grid">
           {features.map((feature) => (
-  <motion.div
-    key={feature.title}   // ✅ unique key
-    className="feature-card"
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
-  >
-    <div className="feature-icon-container">
-      {feature.icon}
-    </div>
-    <h3 className="feature-title">{feature.title}</h3>
-    <p className="feature-description">{feature.description}</p>
-  </motion.div>
-))}
-
+            <motion.div
+              key={feature.title} // ✅ unique key
+              className="feature-card"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <div className="feature-icon-container">{feature.icon}</div>
+              <h3 className="feature-title">{feature.title}</h3>
+              <p className="feature-description">{feature.description}</p>
+            </motion.div>
+          ))}
         </div>
       </section>
 
-<section id="about" className="about-section" aria-labelledby="about-title">
-  <div className="about-container">
-    {/* Centered Header Section */}
-    <div className="section-header-center">
-      <div className="header-line left-line"></div>
-      <div className="header-content">
-        <h2 className="section-title">
-          What Our <span className="highlight">Travelers Say</span>
-        </h2>
-        <p className="section-subtitle">Discover why travelers love sharing their journeys with us</p>
-      </div>
-      <div className="header-line right-line"></div>
-    </div>
-    
-    {feedbacks.length > 0 ? (
-      <div className="feedback-carousel-container">
-        <div className="carousel-background">
-          <div className="bg-pattern-1"></div>
-          <div className="bg-pattern-2"></div>
-        </div>
-        
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={feedbackIndex}
-            className="feedback-card-main"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="quote-icon">
-              <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.638 6.03-8.189l.893 1.378c-3.335 1.804-3.987 4.145-4.248 5.621.537-.278 1.24-.375 1.93-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-.537 0-1.09-.127-1.628-.388zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.638 6.03-8.189l.893 1.378c-3.335 1.804-3.987 4.145-4.248 5.621.537-.278 1.24-.375 1.93-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-.537 0-1.09-.127-1.628-.388z" fill="#FF6B35"/>
-              </svg>
+      <section
+        id="about"
+        className="about-section"
+        aria-labelledby="about-title"
+      >
+        <div className="about-container">
+          {/* Centered Header Section */}
+          <div className="section-header-center">
+            <div className="header-line left-line"></div>
+            <div className="header-content">
+              <h2 className="section-title">
+                What Our <span className="highlight">Travelers Say</span>
+              </h2>
+              <p className="section-subtitle">
+                Discover why travelers love sharing their journeys with us
+              </p>
             </div>
-            <p className="feedback-text">"{feedbacks[feedbackIndex].experience}"</p>
-            <div className="feedback-user">
-              <div className="user-avatar">
-                {feedbacks[feedbackIndex].username.charAt(0).toUpperCase()}
+            <div className="header-line right-line"></div>
+          </div>
+
+          {feedbacks.length > 0 ? (
+            <div className="feedback-carousel-container">
+              <div className="carousel-background">
+                <div className="bg-pattern-1"></div>
+                <div className="bg-pattern-2"></div>
               </div>
-              <div className="user-details">
-                <span className="user-name">{feedbacks[feedbackIndex].username}</span>
-                <span className="user-email">{feedbacks[feedbackIndex].email}</span>
+
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={feedbackIndex}
+                  className="feedback-card-main"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <div className="quote-icon">
+                    <svg
+                      width="60"
+                      height="60"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.638 6.03-8.189l.893 1.378c-3.335 1.804-3.987 4.145-4.248 5.621.537-.278 1.24-.375 1.93-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-.537 0-1.09-.127-1.628-.388zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.638 6.03-8.189l.893 1.378c-3.335 1.804-3.987 4.145-4.248 5.621.537-.278 1.24-.375 1.93-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-.537 0-1.09-.127-1.628-.388z"
+                        fill="#FF6B35"
+                      />
+                    </svg>
+                  </div>
+                  <p className="feedback-text">
+                    "{feedbacks[feedbackIndex].experience}"
+                  </p>
+                  <div className="feedback-user">
+                    <div className="user-avatar">
+                      {feedbacks[feedbackIndex].username
+                        .charAt(0)
+                        .toUpperCase()}
+                    </div>
+                    <div className="user-details">
+                      <span className="user-name">
+                        {feedbacks[feedbackIndex].username}
+                      </span>
+                      <span className="user-email">
+                        {feedbacks[feedbackIndex].email}
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+
+              <div className="carousel-controls">
+                <button
+                  className="carousel-btn prev"
+                  onClick={() =>
+                    setFeedbackIndex(
+                      (prev) => (prev - 1 + feedbacks.length) % feedbacks.length
+                    )
+                  }
+                  aria-label="Previous feedback"
+                >
+                  <FiChevronLeft />
+                </button>
+
+                <div className="carousel-indicators">
+                  {feedbacks.map((_, index) => (
+                    <button
+                      key={index}
+                      className={`indicator ${
+                        index === feedbackIndex ? "active" : ""
+                      }`}
+                      onClick={() => setFeedbackIndex(index)}
+                      aria-label={`Go to feedback ${index + 1}`}
+                    />
+                  ))}
+                </div>
+
+                <button
+                  className="carousel-btn next"
+                  onClick={() =>
+                    setFeedbackIndex((prev) => (prev + 1) % feedbacks.length)
+                  }
+                  aria-label="Next feedback"
+                >
+                  <FiChevronRight />
+                </button>
               </div>
             </div>
-          </motion.div>
-        </AnimatePresence>
-        
-        <div className="carousel-controls">
-          <button 
-            className="carousel-btn prev"
-            onClick={() => setFeedbackIndex((prev) => (prev - 1 + feedbacks.length) % feedbacks.length)}
-            aria-label="Previous feedback"
-          >
-            <FiChevronLeft />
-          </button>
-          
-          <div className="carousel-indicators">
-            {feedbacks.map((_, index) => (
-              <button
-                key={index}
-                className={`indicator ${index === feedbackIndex ? 'active' : ''}`}
-                onClick={() => setFeedbackIndex(index)}
-                aria-label={`Go to feedback ${index + 1}`}
-              />
-            ))}
-          </div>
-          
-          <button 
-            className="carousel-btn next"
-            onClick={() => setFeedbackIndex((prev) => (prev + 1) % feedbacks.length)}
-            aria-label="Next feedback"
-          >
-            <FiChevronRight />
-          </button>
+          ) : (
+            <div className="no-feedbacks-message">
+              <div className="quote-icon">
+                <svg
+                  width="60"
+                  height="60"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.638 6.03-8.189l.893 1.378c-3.335 1.804-3.987 4.145-4.248 5.621.537-.278 1.24-.375 1.93-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-.537 0-1.09-.127-1.628-.388zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.638 6.03-8.189l.893 1.378c-3.335 1.804-3.987 4.145-4.248 5.621.537-.278 1.24-.375 1.93-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-.537 0-1.09-.127-1.628-.388z"
+                    fill="#FF6B35"
+                  />
+                </svg>
+              </div>
+              <p className="feedback-text">
+                TripTales is more than just a travel journal - it's a platform
+                that transforms your experiences into beautiful stories.
+              </p>
+              <div className="feedback-user">
+                <div className="user-avatar">T</div>
+                <div className="user-details">
+                  <span className="user-name">TripTales Team</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-      </div>
-    ) : (
-      <div className="no-feedbacks-message">
-        <div className="quote-icon">
-          <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.638 6.03-8.189l.893 1.378c-3.335 1.804-3.987 4.145-4.248 5.621.537-.278 1.24-.375 1.93-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-.537 0-1.09-.127-1.628-.388zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.638 6.03-8.189l.893 1.378c-3.335 1.804-3.987 4.145-4.248 5.621.537-.278 1.24-.375 1.93-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-.537 0-1.09-.127-1.628-.388z" fill="#FF6B35"/>
-          </svg>
-        </div>
-        <p className="feedback-text">
-          TripTales is more than just a travel journal - it's a platform that transforms your experiences into beautiful stories.
-        </p>
-        <div className="feedback-user">
-          <div className="user-avatar">T</div>
-          <div className="user-details">
-            <span className="user-name">TripTales Team</span>
-            <span className="user-email">hello@triptales.com</span>
-          </div>
-        </div>
-      </div>
-    )}
-  </div>
 
-  {/* Internal CSS */}
-  <style jsx="true">{`
-    .about-section {
-      padding: 100px 20px;
-      background: linear-gradient(135deg, #fff7f0 0%, #fef5ed 100%);
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .about-section::before {
-      content: "";
-      position: absolute;
-      top: -50px;
-      right: -50px;
-      width: 200px;
-      height: 200px;
-      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ff6b3522"><path d="M11.983 0a12.206 12.206 0 00-8.51 3.653A11.8 11.8 0 000 12.207 11.779 11.779 0 0011.8 24h.214A12.111 12.111 0 0024 11.791 11.766 11.766 0 0011.983 0zM10.5 16.542a.66.66 0 01-.654.654.655.655 0 110-1.309.66.66 0 01.654.655zm.631-4.67c-.267.26-.631.653-.631 1.297a.96.96 0 001.923 0c0-1.162-.833-1.818-1.344-2.271-.521-.462-.828-.734-.828-1.295 0-.633.533-1.155 1.172-1.155.64 0 1.16.522 1.16 1.155a.96.96 0 101.922 0A3.082 3.082 0 0012.33 7.19a3.087 3.087 0 00-3.08 3.08c0 1.433.831 2.243 1.457 2.833.314.296.588.554.588.879z"/></svg>');
-      background-repeat: no-repeat;
-      opacity: 0.1;
-      z-index: 0;
-    }
-    
-    .about-section::after {
-      content: "";
-      position: absolute;
-      bottom: -80px;
-      left: -80px;
-      width: 300px;
-      height: 300px;
-      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ff6b3522"><path d="M11.983 0a12.206 12.206 0 00-8.51 3.653A11.8 11.8 0 000 12.207 11.779 11.779 0 0011.8 24h.214A12.111 12.111 0 0024 11.791 11.766 11.766 0 0011.983 0zM10.5 16.542a.66.66 0 01-.654.654.655.655 0 110-1.309.66.66 0 01.654.655zm.631-4.67c-.267.26-.631.653-.631 1.297a.96.96 0 001.923 0c0-1.162-.833-1.818-1.344-2.271-.521-.462-.828-.734-.828-1.295 0-.633.533-1.155 1.172-1.155.64 0 1.16.522 1.16 1.155a.96.96 0 101.922 0A3.082 3.082 0 0012.33 7.19a3.087 3.087 0 00-3.08 3.08c0 1.433.831 2.243 1.457 2.833.314.296.588.554.588.879z"/></svg>');
-      background-repeat: no-repeat;
-      opacity: 0.1;
-      z-index: 0;
-    }
-    
-    .about-container {
-      position: relative;
-      z-index: 1;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-    
-    /* Centered Header Styles */
-    .section-header-center {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 60px;
-      width: 100%;
-    }
-    
-    .header-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 0 30px;
-      flex-shrink: 1;
-      min-width: 0;
-    }
-    
-    .header-line {
-      flex-grow: 1;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #ff6b35, transparent);
-      min-width: 50px;
-    }
-    
-    .left-line {
-      background: linear-gradient(90deg, transparent, #ff6b35);
-    }
-    
-    .right-line {
-      background: linear-gradient(90deg, #ff6b35, transparent);
-    }
-    
-    .section-title {
-      font-size: 2.8rem;
-      font-weight: 800;
-      margin-bottom: 15px;
-      color: #333;
-      text-align: center;
-      line-height: 1.2;
-    }
-    
-    .section-title .highlight {
-      color: #ff6b35;
-      position: relative;
-      display: inline-block;
-    }
-    
-    .section-title .highlight::after {
-      content: "";
-      position: absolute;
-      bottom: -5px;
-      left: 0;
-      width: 100%;
-      height: 3px;
-      background: linear-gradient(90deg, #ff6b35, #ff9d6d);
-      border-radius: 3px;
-    }
-    
-    .section-subtitle {
-      font-size: 1.2rem;
-      color: #666;
-      max-width: 500px;
-      margin: 0 auto;
-      font-weight: 400;
-      text-align: center;
-    }
-    
-    .feedback-carousel-container {
-      background: white;
-      border-radius: 24px;
-      padding: 50px 40px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-      margin-top: 40px;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .carousel-background {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 0;
-      overflow: hidden;
-    }
-    
-    .bg-pattern-1 {
-      position: absolute;
-      top: -30px;
-      right: -30px;
-      width: 150px;
-      height: 150px;
-      background: linear-gradient(135deg, #ffddd3 0%, #ffddd300 70%);
-      border-radius: 50%;
-      opacity: 0.6;
-    }
-    
-    .bg-pattern-2 {
-      position: absolute;
-      bottom: -40px;
-      left: -40px;
-      width: 120px;
-      height: 120px;
-      background: linear-gradient(135deg, #ffddd3 0%, #ffddd300 70%);
-      border-radius: 50%;
-      opacity: 0.4;
-    }
-    
-    .feedback-card-main {
-      min-height: 240px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      z-index: 2;
-    }
-    
-    .quote-icon {
-      margin-bottom: 25px;
-    }
-    
-    .feedback-text {
-      font-size: 1.25rem;
-      line-height: 1.7;
-      color: #444;
-      margin-bottom: 30px;
-      font-style: italic;
-      text-align: center;
-      max-width: 700px;
-      position: relative;
-      padding: 0 20px;
-    }
-    
-    .feedback-user {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-    
-    .user-avatar {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #ff6b35, #ff9d6d);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 700;
-      font-size: 1.2rem;
-    }
-    
-    .user-details {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    
-    .user-name {
-      font-weight: 700;
-      color: #ff6b35;
-      font-size: 1.1rem;
-    }
-    
-    .user-email {
-      font-size: 0.9rem;
-      color: #888;
-      margin-top: 3px;
-    }
-    
-    .carousel-controls {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 40px;
-      gap: 25px;
-    }
-    
-    .carousel-btn {
-      background: linear-gradient(135deg, #ff6b35, #ff9d6d);
-      color: white;
-      border: none;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
-    }
-    
-    .carousel-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(255, 107, 53, 0.4);
-    }
-    
-    .carousel-indicators {
-      display: flex;
-      gap: 12px;
-    }
-    
-    .indicator {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      border: none;
-      background: #ddd;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    
-    .indicator.active {
-      background: #ff6b35;
-      transform: scale(1.2);
-      box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2);
-    }
-    
-    .indicator:hover {
-      background: #ff8c65;
-    }
-    
-    .no-feedbacks-message {
-      background: white;
-      border-radius: 24px;
-      padding: 50px 40px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-      margin-top: 40px;
-      min-height: 240px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .no-feedbacks-message::before {
-      content: "";
-      position: absolute;
-      top: -30px;
-      right: -30px;
-      width: 150px;
-      height: 150px;
-      background: linear-gradient(135deg, #ffddd3 0%, #ffddd300 70%);
-      border-radius: 50%;
-      opacity: 0.6;
-      z-index: 0;
-    }
-    
-    .no-feedbacks-message::after {
-      content: "";
-      position: absolute;
-      bottom: -40px;
-      left: -40px;
-      width: 120px;
-      height: 120px;
-      background: linear-gradient(135deg, #ffddd3 0%, #ffddd300 70%);
-      border-radius: 50%;
-      opacity: 0.4;
-      z-index: 0;
-    }
-    
-    .no-feedbacks-message > * {
-      position: relative;
-      z-index: 1;
-    }
-    
-    @media (max-width: 768px) {
-      .about-section {
-        padding: 70px 20px;
-      }
-      
-      .section-header-center {
-        flex-direction: column;
-        gap: 20px;
-      }
-      
-      .header-line {
-        width: 100px;
-      }
-      
-      .section-title {
-        font-size: 2.2rem;
-      }
-      
-      .section-subtitle {
-        font-size: 1.1rem;
-      }
-      
-      .feedback-carousel-container,
-      .no-feedbacks-message {
-        padding: 30px 20px;
-      }
-      
-      .feedback-text {
-        font-size: 1.1rem;
-      }
-      
-      .carousel-controls {
-        flex-wrap: wrap;
-        gap: 15px;
-      }
-      
-      .feedback-user {
-        flex-direction: column;
-        text-align: center;
-        gap: 10px;
-      }
-      
-      .user-details {
-        align-items: center;
-      }
-    }
-  `}</style>
-</section>
+        {/* Internal CSS */}
+        <style jsx="true">{`
+          .about-section {
+            padding: 100px 20px;
+            background: linear-gradient(135deg, #fff7f0 0%, #fef5ed 100%);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+          }
 
+          .about-section::before {
+            content: "";
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ff6b3522"><path d="M11.983 0a12.206 12.206 0 00-8.51 3.653A11.8 11.8 0 000 12.207 11.779 11.779 0 0011.8 24h.214A12.111 12.111 0 0024 11.791 11.766 11.766 0 0011.983 0zM10.5 16.542a.66.66 0 01-.654.654.655.655 0 110-1.309.66.66 0 01.654.655zm.631-4.67c-.267.26-.631.653-.631 1.297a.96.96 0 001.923 0c0-1.162-.833-1.818-1.344-2.271-.521-.462-.828-.734-.828-1.295 0-.633.533-1.155 1.172-1.155.64 0 1.16.522 1.16 1.155a.96.96 0 101.922 0A3.082 3.082 0 0012.33 7.19a3.087 3.087 0 00-3.08 3.08c0 1.433.831 2.243 1.457 2.833.314.296.588.554.588.879z"/></svg>');
+            background-repeat: no-repeat;
+            opacity: 0.1;
+            z-index: 0;
+          }
 
+          .about-section::after {
+            content: "";
+            position: absolute;
+            bottom: -80px;
+            left: -80px;
+            width: 300px;
+            height: 300px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ff6b3522"><path d="M11.983 0a12.206 12.206 0 00-8.51 3.653A11.8 11.8 0 000 12.207 11.779 11.779 0 0011.8 24h.214A12.111 12.111 0 0024 11.791 11.766 11.766 0 0011.983 0zM10.5 16.542a.66.66 0 01-.654.654.655.655 0 110-1.309.66.66 0 01.654.655zm.631-4.67c-.267.26-.631.653-.631 1.297a.96.96 0 001.923 0c0-1.162-.833-1.818-1.344-2.271-.521-.462-.828-.734-.828-1.295 0-.633.533-1.155 1.172-1.155.64 0 1.16.522 1.16 1.155a.96.96 0 101.922 0A3.082 3.082 0 0012.33 7.19a3.087 3.087 0 00-3.08 3.08c0 1.433.831 2.243 1.457 2.833.314.296.588.554.588.879z"/></svg>');
+            background-repeat: no-repeat;
+            opacity: 0.1;
+            z-index: 0;
+          }
 
+          .about-container {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+          }
+
+          /* Centered Header Styles */
+          .section-header-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 60px;
+            width: 100%;
+          }
+
+          .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 30px;
+            flex-shrink: 1;
+            min-width: 0;
+          }
+
+          .header-line {
+            flex-grow: 1;
+            height: 2px;
+            background: linear-gradient(
+              90deg,
+              transparent,
+              #ff6b35,
+              transparent
+            );
+            min-width: 50px;
+          }
+
+          .left-line {
+            background: linear-gradient(90deg, transparent, #ff6b35);
+          }
+
+          .right-line {
+            background: linear-gradient(90deg, #ff6b35, transparent);
+          }
+
+          .section-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: #333;
+            text-align: center;
+            line-height: 1.2;
+          }
+
+          .section-title .highlight {
+            color: #ff6b35;
+            position: relative;
+            display: inline-block;
+          }
+
+          .section-title .highlight::after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #ff6b35, #ff9d6d);
+            border-radius: 3px;
+          }
+
+          .section-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 500px;
+            margin: 0 auto;
+            font-weight: 400;
+            text-align: center;
+          }
+
+          .feedback-carousel-container {
+            background: white;
+            border-radius: 24px;
+            padding: 50px 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            margin-top: 40px;
+            position: relative;
+            overflow: hidden;
+          }
+
+          .carousel-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+            overflow: hidden;
+          }
+
+          .bg-pattern-1 {
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, #ffddd3 0%, #ffddd300 70%);
+            border-radius: 50%;
+            opacity: 0.6;
+          }
+
+          .bg-pattern-2 {
+            position: absolute;
+            bottom: -40px;
+            left: -40px;
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #ffddd3 0%, #ffddd300 70%);
+            border-radius: 50%;
+            opacity: 0.4;
+          }
+
+          .feedback-card-main {
+            min-height: 240px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+          }
+
+          .quote-icon {
+            margin-bottom: 25px;
+          }
+
+          .feedback-text {
+            font-size: 1.25rem;
+            line-height: 1.7;
+            color: #444;
+            margin-bottom: 30px;
+            font-style: italic;
+            text-align: center;
+            max-width: 700px;
+            position: relative;
+            padding: 0 20px;
+          }
+
+          .feedback-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+          }
+
+          .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b35, #ff9d6d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+          }
+
+          .user-details {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+          }
+
+          .user-name {
+            font-weight: 700;
+            color: #ff6b35;
+            font-size: 1.1rem;
+          }
+
+          .user-email {
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 3px;
+          }
+
+          .carousel-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 40px;
+            gap: 25px;
+          }
+
+          .carousel-btn {
+            background: linear-gradient(135deg, #ff6b35, #ff9d6d);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+          }
+
+          .carousel-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.4);
+          }
+
+          .carousel-indicators {
+            display: flex;
+            gap: 12px;
+          }
+
+          .indicator {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: none;
+            background: #ddd;
+            cursor: pointer;
+            transition: all 0.3s ease;
+          }
+
+          .indicator.active {
+            background: #ff6b35;
+            transform: scale(1.2);
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2);
+          }
+
+          .indicator:hover {
+            background: #ff8c65;
+          }
+
+          .no-feedbacks-message {
+            background: white;
+            border-radius: 24px;
+            padding: 50px 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            margin-top: 40px;
+            min-height: 240px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+          }
+
+          .no-feedbacks-message::before {
+            content: "";
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, #ffddd3 0%, #ffddd300 70%);
+            border-radius: 50%;
+            opacity: 0.6;
+            z-index: 0;
+          }
+
+          .no-feedbacks-message::after {
+            content: "";
+            position: absolute;
+            bottom: -40px;
+            left: -40px;
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #ffddd3 0%, #ffddd300 70%);
+            border-radius: 50%;
+            opacity: 0.4;
+            z-index: 0;
+          }
+
+          .no-feedbacks-message > * {
+            position: relative;
+            z-index: 1;
+          }
+
+          @media (max-width: 768px) {
+            .about-section {
+              padding: 70px 20px;
+            }
+
+            .section-header-center {
+              flex-direction: column;
+              gap: 20px;
+            }
+
+            .header-line {
+              width: 100px;
+            }
+
+            .section-title {
+              font-size: 2.2rem;
+            }
+
+            .section-subtitle {
+              font-size: 1.1rem;
+            }
+
+            .feedback-carousel-container,
+            .no-feedbacks-message {
+              padding: 30px 20px;
+            }
+
+            .feedback-text {
+              font-size: 1.1rem;
+            }
+
+            .carousel-controls {
+              flex-wrap: wrap;
+              gap: 15px;
+            }
+
+            .feedback-user {
+              flex-direction: column;
+              text-align: center;
+              gap: 10px;
+            }
+
+            .user-details {
+              align-items: center;
+            }
+          }
+        `}</style>
+      </section>
 
       {/* CTA Section */}
       <section
@@ -1018,59 +1053,59 @@ useEffect(() => {
         }
 
         /* About Section */
-//         .about-section {
-//   padding: 60px 20px;
-//   background-color: #fff7f0; /* soft theme color */
-//   text-align: center;
-// }
+        //         .about-section {
+        //   padding: 60px 20px;
+        //   background-color: #fff7f0; /* soft theme color */
+        //   text-align: center;
+        // }
 
-// .about-container {
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   overflow: hidden;
-//   position: relative;
-//   max-width: 900px;
-//   margin: 0 auto;
-//   height: 180px; /* adjust as needed */
-// }
+        // .about-container {
+        //   display: flex;
+        //   justify-content: center;
+        //   align-items: center;
+        //   overflow: hidden;
+        //   position: relative;
+        //   max-width: 900px;
+        //   margin: 0 auto;
+        //   height: 180px; /* adjust as needed */
+        // }
 
-// .about-text-carousel {
-//   background-color: #ff6b35; /* orange theme */
-//   color: #fff;
-//   border-radius: 20px;
-//   padding: 20px 30px;
-//   margin: 0 10px;
-//   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-//   min-width: 250px;
-//   max-width: 350px;
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: center;
-//   align-items: center;
-//   font-style: italic;
-//   font-size: 1rem;
-//   line-height: 1.4;
-// }
+        // .about-text-carousel {
+        //   background-color: #ff6b35; /* orange theme */
+        //   color: #fff;
+        //   border-radius: 20px;
+        //   padding: 20px 30px;
+        //   margin: 0 10px;
+        //   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        //   min-width: 250px;
+        //   max-width: 350px;
+        //   display: flex;
+        //   flex-direction: column;
+        //   justify-content: center;
+        //   align-items: center;
+        //   font-style: italic;
+        //   font-size: 1rem;
+        //   line-height: 1.4;
+        // }
 
-// .about-text-carousel strong {
-//   color: #ffe5d0; /* lighter highlight for username */
-//   margin-top: 8px;
-//   display: block;
-//   font-weight: 700;
-// }
+        // .about-text-carousel strong {
+        //   color: #ffe5d0; /* lighter highlight for username */
+        //   margin-top: 8px;
+        //   display: block;
+        //   font-weight: 700;
+        // }
 
-// @media (max-width: 768px) {
-//   .about-container {
-//     height: auto;
-//     flex-direction: column;
-//   }
+        // @media (max-width: 768px) {
+        //   .about-container {
+        //     height: auto;
+        //     flex-direction: column;
+        //   }
 
-//   .about-text-carousel {
-//     margin: 10px 0;
-//     min-width: 80%;
-//   }
-// }
+        //   .about-text-carousel {
+        //     margin: 10px 0;
+        //     min-width: 80%;
+        //   }
+        // }
 
         /* Testimonials Section */
         // .testimonials-section {

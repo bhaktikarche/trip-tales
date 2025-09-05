@@ -1,22 +1,20 @@
-import express from 'express';
+import express from "express";
 //1lines
-// import db from "../config/db.js"; 
+// import db from "../config/db.js";
 
-import { 
+import {
   createExperience,
   getUserExperiences,
   updateExperience,
-  deleteExperience
-} from '../controllers/experienceController.js';
-import { authenticateToken } from '../middleware/auth.js';
+  deleteExperience,
+} from "../controllers/experienceController.js";
+import { authenticateToken } from "../Middleware/auth.js";
 
 const router = express.Router();
 
-router.post('/', authenticateToken, createExperience);
-router.get('/', authenticateToken, getUserExperiences);
-router.put('/:id', authenticateToken, updateExperience);
-router.delete('/:id', authenticateToken, deleteExperience);
-
-
+router.post("/", authenticateToken, createExperience);
+router.get("/", authenticateToken, getUserExperiences);
+router.put("/:id", authenticateToken, updateExperience);
+router.delete("/:id", authenticateToken, deleteExperience);
 
 export default router;

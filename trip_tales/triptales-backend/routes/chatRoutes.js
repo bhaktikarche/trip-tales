@@ -8,7 +8,7 @@ const router = express.Router();
 router.post("/init", async (req, res) => {
   try {
     const { postId, userId } = req.body;
-    
+
     // Check if chat exists
     const [existingChat] = await db.query(
       "SELECT id FROM chats WHERE post_id = ?",
@@ -25,12 +25,11 @@ router.post("/init", async (req, res) => {
         [postId]
       );
       chatId = result.insertId;
-      
+
       // Add post owner as participant
-      const [post] = await db.query(
-        "SELECT user_id FROM posts WHERE id = ?",
-        [postId]
-      );
+      const [post] = await db.query("SELECT user_id FROM posts WHERE id = ?", [
+        postId,
+      ]);
       if (post.length > 0) {
         await db.query(
           "INSERT INTO chat_participants (chat_id, user_id) VALUES (?, ?)",
@@ -62,12 +61,13 @@ router.post("/init", async (req, res) => {
 router.get("/conversations", async (req, res) => {
   try {
     const { userId } = req.query;
-    
+
     if (!userId) {
       return res.status(400).json({ error: "userId is required" });
     }
 
-    const [conversations] = await db.query(`
+    const [conversations] = await db.query(
+      `
   SELECT 
     c.id,
     c.post_id,
@@ -86,7 +86,9 @@ router.get("/conversations", async (req, res) => {
   WHERE cp.user_id = ?
   GROUP BY c.id
   ORDER BY (SELECT MAX(created_at) FROM messages WHERE chat_id = c.id) DESC
-`, [userId, userId, userId]);
+`,
+      [userId, userId, userId]
+    );
 
     res.json({ conversations });
   } catch (err) {
@@ -100,7 +102,7 @@ router.get("/:chatId/messages", async (req, res) => {
   try {
     const { chatId } = req.params;
     const { userId } = req.query;
-    
+
     if (!userId) {
       return res.status(400).json({ error: "userId is required" });
     }
@@ -119,7 +121,7 @@ router.get("/:chatId/messages", async (req, res) => {
        ORDER BY m.created_at ASC`,
       [chatId]
     );
-    
+
     res.json({ messages });
   } catch (err) {
     console.error(err);

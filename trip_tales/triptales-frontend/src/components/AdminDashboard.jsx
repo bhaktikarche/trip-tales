@@ -154,10 +154,7 @@ function AdminDashboard() {
                   <td rowSpan={group.posts.length}>{group.user_name}</td>
                 )}
                 <td>{new Date(post.created_at).toLocaleDateString()}</td>
-                <td
-                  className="link-like"
-                  onClick={() => setSelectedPost(post)}
-                >
+                <td className="link-like" onClick={() => setSelectedPost(post)}>
                   {post.title}
                 </td>
                 <td>{commentsCount[post.id] || 0}</td>
@@ -177,10 +174,7 @@ function AdminDashboard() {
 
       {/* ---------------- Post Popup ---------------- */}
       {selectedPost && (
-        <PostPopup
-          post={selectedPost}
-          onClose={() => setSelectedPost(null)}
-        />
+        <PostPopup post={selectedPost} onClose={() => setSelectedPost(null)} />
       )}
     </div>
   );
@@ -195,7 +189,9 @@ function PostPopup({ post, onClose }) {
 
   const next = () => setCurrentIndex((prev) => (prev + 1) % post.images.length);
   const prev = () =>
-    setCurrentIndex((prev) => (prev - 1 + post.images.length) % post.images.length);
+    setCurrentIndex(
+      (prev) => (prev - 1 + post.images.length) % post.images.length
+    );
 
   const getImageSrc = (img) => {
     if (!img) return "/fallback.png";
@@ -215,10 +211,20 @@ function PostPopup({ post, onClose }) {
         <div className="popup-header">
           <h2 className="popup-title">{post.title}</h2>
           <div className="popup-meta">
-            {post.location_name && <span className="meta-item">📍 {post.location_name}</span>}
-            {post.budget != null && <span className="meta-item">💰 ₹{Number(post.budget).toLocaleString()}</span>}
-            {post.duration_days && <span className="meta-item">🕒 {post.duration_days} days</span>}
-            {post.best_season && <span className="meta-item">🌤️ {post.best_season}</span>}
+            {post.location_name && (
+              <span className="meta-item">📍 {post.location_name}</span>
+            )}
+            {post.budget != null && (
+              <span className="meta-item">
+                💰 ₹{Number(post.budget).toLocaleString()}
+              </span>
+            )}
+            {post.duration_days && (
+              <span className="meta-item">🕒 {post.duration_days} days</span>
+            )}
+            {post.best_season && (
+              <span className="meta-item">🌤️ {post.best_season}</span>
+            )}
           </div>
         </div>
 

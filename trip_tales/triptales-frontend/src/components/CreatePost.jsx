@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
-import { FaArrowLeft } from 'react-icons/fa';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import './CreatePost.css'; // You will write CSS here
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import { FaArrowLeft } from "react-icons/fa";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "./CreatePost.css"; // You will write CSS here
 
 function CreatePost() {
   const navigate = useNavigate();
@@ -13,14 +13,14 @@ function CreatePost() {
   const editingPost = location.state?.post || null;
 
   const [formData, setFormData] = useState({
-    title: '',
-    location: '',
-    latitude: '',
-    longitude: '',
-    experience: '',
-    budget: '',
-    duration: '',
-    season: 'Any',
+    title: "",
+    location: "",
+    latitude: "",
+    longitude: "",
+    experience: "",
+    budget: "",
+    duration: "",
+    season: "Any",
   });
 
   const [suggestions, setSuggestions] = useState([]);
@@ -28,20 +28,20 @@ function CreatePost() {
   const [previews, setPreviews] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const seasons = ['Any', 'Summer', 'Winter', 'Spring', 'Autumn', 'Monsoon'];
+  const seasons = ["Any", "Summer", "Winter", "Spring", "Autumn", "Monsoon"];
 
   // Prefill form if editing
   useEffect(() => {
     if (editingPost) {
       setFormData({
-        title: editingPost.title || '',
-        location: editingPost.location_name || '',
-        latitude: editingPost.latitude || '',
-        longitude: editingPost.longitude || '',
-        experience: editingPost.experience || '',
-        budget: editingPost.budget || '',
-        duration: editingPost.duration || '',
-        season: editingPost.season || 'Any',
+        title: editingPost.title || "",
+        location: editingPost.location_name || "",
+        latitude: editingPost.latitude || "",
+        longitude: editingPost.longitude || "",
+        experience: editingPost.experience || "",
+        budget: editingPost.budget || "",
+        duration: editingPost.duration || "",
+        season: editingPost.season || "Any",
       });
       // If you want to preview existing images, implement that here
     }
@@ -57,13 +57,13 @@ function CreatePost() {
     }
 
     try {
-      const res = await axios.get('/api/location-search', {
+      const res = await axios.get("/api/location-search", {
         params: { q: value },
       });
       setSuggestions(res.data);
     } catch (err) {
-      console.error('Location search failed', err);
-      toast.error('Failed to search locations');
+      console.error("Location search failed", err);
+      toast.error("Failed to search locations");
     }
   };
 
@@ -86,12 +86,12 @@ function CreatePost() {
     const files = Array.from(e.target.files);
 
     if (files.length > 10) {
-      toast.warning('You can upload up to 10 images only');
+      toast.warning("You can upload up to 10 images only");
       return;
     }
 
     const validFiles = files.filter((file) => {
-      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+      const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
       const isValidType = validTypes.includes(file.type);
       const isValidSize = file.size <= 5 * 1024 * 1024;
 
@@ -125,14 +125,14 @@ function CreatePost() {
     const { title, location, experience, budget } = formData;
 
     if (!title || !location || !experience || !budget) {
-      toast.error('Please fill all required fields');
+      toast.error("Please fill all required fields");
       setIsSubmitting(false);
       return;
     }
 
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) {
-      toast.error('You must be logged in to submit.');
+      toast.error("You must be logged in to submit.");
       setIsSubmitting(false);
       return;
     }
@@ -143,8 +143,8 @@ function CreatePost() {
         await axios.put(`/api/posts/${id}`, formData, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        toast.success('Post updated successfully!');
-        navigate('/myaccount');
+        toast.success("Post updated successfully!");
+        navigate("/myaccount");
       } else {
         // CREATE MODE
         const formDataToSend = new FormData();
@@ -152,23 +152,23 @@ function CreatePost() {
           formDataToSend.append(key, value);
         });
         photos.forEach((photo) => {
-          formDataToSend.append('images', photo);
+          formDataToSend.append("images", photo);
         });
 
-        await axios.post('/api/posts', formDataToSend, {
+        await axios.post("/api/posts", formDataToSend, {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
         });
-        toast.success('Post created successfully!');
-        navigate('/myaccount');
+        toast.success("Post created successfully!");
+        navigate("/myaccount");
       }
     } catch (error) {
-      console.error('Submission error:', error);
+      console.error("Submission error:", error);
       let errorMessage = editingPost
-        ? 'Failed to update post'
-        : 'Failed to create post';
+        ? "Failed to update post"
+        : "Failed to create post";
       if (error.response) {
         errorMessage = error.response.data.message || errorMessage;
       }
@@ -180,14 +180,16 @@ function CreatePost() {
 
   return (
     <div className="create-post-container">
-      <button className="back-btn" onClick={() => navigate('/postdashboard')}>
+      <button className="back-btn" onClick={() => navigate("/postdashboard")}>
         <FaArrowLeft className="icon" />
         Back to Dashboard
       </button>
 
       <div className="card">
         <div className="card-header">
-          <h2>{editingPost ? 'Edit Your Trip' : 'Share Your Travel Experience'}</h2>
+          <h2>
+            {editingPost ? "Edit Your Trip" : "Share Your Travel Experience"}
+          </h2>
         </div>
         <div className="card-body">
           <form onSubmit={handleSubmit} className="form">
@@ -308,7 +310,11 @@ function CreatePost() {
                 <div className="image-previews">
                   {previews.map((src, i) => (
                     <div key={i} className="preview-wrapper">
-                      <img src={src} alt={`preview-${i}`} className="preview-image" />
+                      <img
+                        src={src}
+                        alt={`preview-${i}`}
+                        className="preview-image"
+                      />
                       <button
                         type="button"
                         className="remove-btn"
@@ -323,14 +329,18 @@ function CreatePost() {
             )}
 
             {/* Submit Button */}
-            <button type="submit" className="submit-btn" disabled={isSubmitting}>
+            <button
+              type="submit"
+              className="submit-btn"
+              disabled={isSubmitting}
+            >
               {isSubmitting
                 ? editingPost
-                  ? 'Saving...'
-                  : 'Sharing...'
+                  ? "Saving..."
+                  : "Sharing..."
                 : editingPost
-                ? 'Update Trip'
-                : 'Share Your Trip'}
+                ? "Update Trip"
+                : "Share Your Trip"}
             </button>
           </form>
         </div>

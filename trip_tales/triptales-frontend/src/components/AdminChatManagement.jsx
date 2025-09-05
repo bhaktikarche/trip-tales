@@ -1,8 +1,9 @@
 // AdminChatManagement.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,  } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "./AdminChatManagement.css";
+import { Link } from "react-router-dom";
 
 function AdminChatManagement() {
   const [conversations, setConversations] = useState([]);
@@ -18,15 +19,18 @@ function AdminChatManagement() {
     const fetchConversations = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get("http://localhost:5000/api/admin/chats", {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const response = await axios.get(
+          "http://localhost:5000/api/admin/chats",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setConversations(response.data.conversations);
 
         // Extract blocked users
         const blockedIds = response.data.conversations
-          .filter(conv => conv.is_blocked)
-          .map(conv => conv.user_id);
+          .filter((conv) => conv.is_blocked)
+          .map((conv) => conv.user_id);
         setBlockedUsers(new Set(blockedIds));
       } catch (err) {
         console.error("Error fetching conversations:", err);
@@ -69,7 +73,7 @@ function AdminChatManagement() {
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        setBlockedUsers(prev => new Set([...prev, userId]));
+        setBlockedUsers((prev) => new Set([...prev, userId]));
         toast.success("User blocked successfully");
       } catch (err) {
         console.error("Error blocking user:", err);
@@ -87,7 +91,7 @@ function AdminChatManagement() {
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        setBlockedUsers(prev => {
+        setBlockedUsers((prev) => {
           const newSet = new Set(prev);
           newSet.delete(userId);
           return newSet;
@@ -101,10 +105,12 @@ function AdminChatManagement() {
   };
 
   // Filter conversations
-  const filteredConversations = conversations.filter(conv =>
-    conv.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    conv.post_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (conv.last_message && conv.last_message.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredConversations = conversations.filter(
+    (conv) =>
+      conv.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      conv.post_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (conv.last_message &&
+        conv.last_message.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const formatDate = (dateString) => {
@@ -113,14 +119,22 @@ function AdminChatManagement() {
   };
 
   if (isLoading) {
-    return <div className="chat-management-loading">Loading conversations...</div>;
+    return (
+      <div className="chat-management-loading">Loading conversations...</div>
+    );
   }
 
   return (
     <div className="admin-chat-management">
-      <h2 className="chat-management-title">
-        <i className="fas fa-comments"></i> Chat Management
-      </h2>
+      <div className="head">
+        <h2 className="chat-management-title">
+          <i className="fas fa-comments"></i> Chat Management
+        </h2>
+
+        <Link to="/admindashboard" className="tt-create-trip-btn">
+          ⬅ Back to Dashboard
+        </Link>
+      </div>
 
       <div className="chat-management-container">
         {/* Conversations sidebar */}
@@ -139,14 +153,17 @@ function AdminChatManagement() {
           <div className="conversations-list">
             {filteredConversations.length === 0 ? (
               <div className="no-conversations">
-                {searchTerm ? "No matching conversations found" : "No conversations yet"}
+                {searchTerm
+                  ? "No matching conversations found"
+                  : "No conversations yet"}
               </div>
             ) : (
-              filteredConversations.map(conv => (
+              filteredConversations.map((conv) => (
                 <div
                   key={`${conv.id}-${conv.user_id}`}
                   className={`conversation-item ${
-                    selectedChat?.chatId === conv.id && selectedChat?.userId === conv.user_id
+                    selectedChat?.chatId === conv.id &&
+                    selectedChat?.userId === conv.user_id
                       ? "selected"
                       : ""
                   }`}
@@ -157,13 +174,17 @@ function AdminChatManagement() {
                     {blockedUsers.has(conv.user_id) && (
                       <span className="blocked-badge">Blocked</span>
                     )}
-                    <span className="message-count">{conv.message_count} messages</span>
+                    <span className="message-count">
+                      {conv.message_count} messages
+                    </span>
                   </div>
                   <div className="post-title">Post: {conv.post_title}</div>
                   <div className="last-message">
                     {conv.last_message && (
                       <>
-                        <span className="last-message-text">{conv.last_message}</span>
+                        <span className="last-message-text">
+                          {conv.last_message}
+                        </span>
                         <span className="last-message-time">
                           {formatDate(conv.last_message_at)}
                         </span>
@@ -205,15 +226,20 @@ function AdminChatManagement() {
             <>
               <div className="messages-header">
                 <h3>
-                  Chat for Post: {
+                  Chat for Post:{" "}
+                  {
                     conversations.find(
-                      c => c.id === selectedChat.chatId && c.user_id === selectedChat.userId
+                      (c) =>
+                        c.id === selectedChat.chatId &&
+                        c.user_id === selectedChat.userId
                     )?.post_title
                   }
                 </h3>
                 <button
                   className={
-                    blockedUsers.has(selectedChat.userId) ? "btn btn-success" : "btn btn-danger"
+                    blockedUsers.has(selectedChat.userId)
+                      ? "btn btn-success"
+                      : "btn btn-danger"
                   }
                   onClick={() => {
                     if (blockedUsers.has(selectedChat.userId)) {
@@ -223,24 +249,32 @@ function AdminChatManagement() {
                     }
                   }}
                 >
-                  {blockedUsers.has(selectedChat.userId) ? "Unblock User" : "Block User"}
+                  {blockedUsers.has(selectedChat.userId)
+                    ? "Unblock User"
+                    : "Block User"}
                 </button>
               </div>
 
               <div className="messages-container">
                 {messages.length === 0 ? (
-                  <div className="no-messages">No messages in this conversation</div>
+                  <div className="no-messages">
+                    No messages in this conversation
+                  </div>
                 ) : (
-                  messages.map(msg => (
+                  messages.map((msg) => (
                     <div
                       key={msg.id}
                       className={`message ${
-                        msg.sender_id === selectedChat.userId ? "user-message" : "other-message"
+                        msg.sender_id === selectedChat.userId
+                          ? "user-message"
+                          : "other-message"
                       }`}
                     >
                       <div className="message-header">
                         <span className="sender-name">{msg.sender_name}</span>
-                        <span className="message-time">{formatDate(msg.created_at)}</span>
+                        <span className="message-time">
+                          {formatDate(msg.created_at)}
+                        </span>
                       </div>
                       <div className="message-body">{msg.body}</div>
                     </div>

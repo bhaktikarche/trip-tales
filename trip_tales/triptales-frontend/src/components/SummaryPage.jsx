@@ -31,15 +31,21 @@ const SummaryPage = () => {
     <div className="container py-5">
       <button
         className="btn btn-primary mb-3"
-        onClick={() => navigate('/postdashboard')} // Replace '/dashboard' with your actual dashboard route
+        onClick={() => navigate("/postdashboard")} // Replace '/dashboard' with your actual dashboard route
       >
         ← Back to Dashboard
       </button>
 
       <h2>{summary.title}</h2>
-      <p><strong>Location:</strong> {summary.location_name}</p>
-      <p><strong>Duration:</strong> {summary.duration_days} days</p>
-      <p><strong>Budget:</strong> ₹{summary.budget}</p>
+      <p>
+        <strong>Location:</strong> {summary.location_name}
+      </p>
+      <p>
+        <strong>Duration:</strong> {summary.duration_days} days
+      </p>
+      <p>
+        <strong>Budget:</strong> ₹{summary.budget}
+      </p>
       <hr />
       <p>{summary.summary_text}</p>
     </div>
