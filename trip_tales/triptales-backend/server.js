@@ -35,7 +35,7 @@ const httpServer = createServer(app);
 // --- Socket.IO setup ---
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:5173",
+origin: process.env.CLIENT_URL || "http://localhost:5173",
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -158,10 +158,14 @@ function authenticateAdmin(req, res, next) {
   }
 
   try {
-    const jwtSecret =
-      process.env.JWT_SECRET || "fallback_secret_key_for_testing";
-    const decoded = jwt.verify(token, jwtSecret);
-    console.log("Decoded token:", decoded);
+    const jwtSecret = process.env.JWT_SECRET;
+if (!jwtSecret) {
+  throw new Error("JWT_SECRET is not defined in environment variables");
+}
+
+const decoded = jwt.verify(token, jwtSecret);
+console.log("Decoded token:", decoded);
+
 
     // Check for role instead of isAdmin
     if (decoded.role !== "admin") {
@@ -349,10 +353,12 @@ const initializeApp = async () => {
   );
 
   // Use httpServer to listen, not app.listen()
-  httpServer.listen(5000, () => {
-    console.log("Backend running on http://localhost:5000");
-    console.log("Socket.IO server is ready");
-  });
+  const PORT = process.env.PORT || 5000;
+httpServer.listen(PORT, () => {
+  console.log(`Backend running on port ${PORT}`);
+  console.log("Socket.IO server is ready");
+});
+
 };
 
 // Start the application
