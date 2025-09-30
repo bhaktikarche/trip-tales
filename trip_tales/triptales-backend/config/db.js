@@ -8,10 +8,11 @@ const pool = mysql.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  port: process.env.DB_PORT,
+  port: Number(process.env.DB_PORT),  // <-- convert to number
   waitForConnections: true,
   connectionLimit: 10,
 });
+
 
 const promisePool = pool.promise();
 export default promisePool;
