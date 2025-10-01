@@ -15,7 +15,7 @@ function AdminAnnouncements() {
 
   const fetchAnnouncements = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/announcements", {
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/announcements`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setAnnouncements(res.data);
@@ -28,7 +28,7 @@ function AdminAnnouncements() {
     if (!title.trim() || !message.trim()) return;
     try {
       await axios.post(
-        "http://localhost:5000/api/announcements",
+        `${import.meta.env.VITE_API_BASE_URL}/announcements`,
         { title, message },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -44,7 +44,7 @@ function AdminAnnouncements() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/announcements/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/announcements/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       fetchAnnouncements();

@@ -35,11 +35,12 @@ const httpServer = createServer(app);
 // --- Socket.IO setup ---
 const io = new Server(httpServer, {
   cors: {
-origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: "https://trip-tales-fqbl.onrender.com", // deployed frontend
     methods: ["GET", "POST"],
     credentials: true,
   },
 });
+
 
 // Make io available to routes
 export { io };
@@ -187,13 +188,14 @@ const initializeApp = async () => {
   await testDatabaseConnection();
 
   // Middleware
-  app.use(
-    cors({
-      origin: "http://localhost:5173",
-      credentials: true,
-      allowedHeaders: ["Content-Type", "Authorization"],
-    })
-  );
+ app.use(
+  cors({
+    origin: "https://trip-tales-fqbl.onrender.com", // deployed frontend URL
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));

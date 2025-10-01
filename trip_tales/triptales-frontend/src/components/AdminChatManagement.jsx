@@ -20,7 +20,7 @@ function AdminChatManagement() {
       try {
         setIsLoading(true);
         const response = await axios.get(
-          "http://localhost:5000/api/admin/chats",
+          `${import.meta.env.VITE_API_BASE_URL}/admin/chats`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -53,7 +53,7 @@ function AdminChatManagement() {
   const fetchMessages = async (chatId, userId) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/admin/chats/${chatId}/messages`,
+        `${import.meta.env.VITE_API_BASE_URL}/admin/chats/${chatId}/messages`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setMessages(response.data.messages);
@@ -69,7 +69,7 @@ function AdminChatManagement() {
     if (window.confirm("Are you sure you want to block this user?")) {
       try {
         await axios.post(
-          `http://localhost:5000/api/admin/block-user/${userId}`,
+          `${import.meta.env.VITE_API_BASE_URL}/admin/block-user/${userId}`,
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -87,7 +87,7 @@ function AdminChatManagement() {
     if (window.confirm("Are you sure you want to unblock this user?")) {
       try {
         await axios.post(
-          `http://localhost:5000/api/admin/unblock-user/${userId}`,
+          `${import.meta.env.VITE_API_BASE_URL}/admin/unblock-user/${userId}`,
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );

@@ -22,7 +22,7 @@ function AdminDashboard() {
     async (postId) => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/comments/${postId}`,
+          `${import.meta.env.VITE_API_BASE_URL}/comments/${postId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setCommentsCount((prev) => ({ ...prev, [postId]: res.data.length }));
@@ -38,7 +38,7 @@ function AdminDashboard() {
     try {
       if (!token) return toast.error("Unauthorized: Please login");
 
-      const res = await axios.get("http://localhost:5000/api/posts", {
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/posts`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -58,7 +58,7 @@ function AdminDashboard() {
   const handleDelete = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/posts/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/posts/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       toast.success("Post deleted!");
@@ -197,7 +197,7 @@ function PostPopup({ post, onClose }) {
     if (!img) return "/fallback.png";
     if (/^https?:\/\//i.test(img)) return img;
     if (img.startsWith("data:image")) return img;
-    if (img.startsWith("/uploads")) return `http://localhost:5000${img}`;
+    if (img.startsWith("/uploads")) return `${import.meta.env.VITE_API_BASE_URL.replace(/\/api$/, "")}${img}`;
     return img;
   };
 

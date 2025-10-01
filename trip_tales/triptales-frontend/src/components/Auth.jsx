@@ -72,10 +72,13 @@ function Auth() {
 
     setIsLoading(true);
     try {
-      const res = await axios.post("http://localhost:5000/api/login", {
-        username: form.username,
-        password: form.password,
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/login`,
+        {
+          username: form.username,
+          password: form.password,
+        }
+      );
 
       const { token, user, message, redirectTo } = res.data;
       if (token && user) {
@@ -99,7 +102,11 @@ function Auth() {
 
     setIsLoading(true);
     try {
-      const res = await axios.post("http://localhost:5000/api/register", form);
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/register`,
+        form,
+        { withCredentials: true }
+      );
       toast.success(res.data.message || "Registration successful!");
       setIsRegister(false);
       // Reset form after successful registration

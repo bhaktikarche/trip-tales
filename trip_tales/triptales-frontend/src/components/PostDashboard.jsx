@@ -83,7 +83,7 @@ function PostDashboard() {
       if (!token) return;
 
       try {
-        const res = await axios.get("http://localhost:5000/api/me", {
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setCurrentUser(res.data);
@@ -301,9 +301,14 @@ function PostDashboard() {
       if (!currentUser) return;
 
       try {
-        const res = await axios.get("http://localhost:5000/api/announcements", {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/announcements`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
 
         // Filter out seen announcements for this user
         const key = `seenAnnouncements_${currentUser.id}`;
@@ -334,7 +339,7 @@ function PostDashboard() {
 
       // Optional: notify server (still include userId!)
       await axios.post(
-        "http://localhost:5000/api/announcements/seen",
+        `${import.meta.env.VITE_API_BASE_URL}/announcements/seen`,
         { announcementId: id, userId },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -569,7 +574,10 @@ function PostDashboard() {
                 {hasImages ? (
                   <div className="image-gallery-container">
                     <img
-                      src={`http://localhost:5000${post.images[currentIndex]}`}
+                      src={`${import.meta.env.VITE_API_BASE_URL.replace(
+                        /\/api$/,
+                        ""
+                      )}${post.images[currentIndex]}`}
                       className="card-img-top gallery-image"
                       alt={`Post ${currentIndex + 1}`}
                     />

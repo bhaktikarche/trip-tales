@@ -20,7 +20,7 @@ function ViewFeedbacks() {
 
   const fetchFeedbacks = useCallback(async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/feedback/all");
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/feedback/all`);
       // Map the response to ensure we have username property
       const formattedFeedbacks = res.data.map((fb) => ({
         ...fb,

@@ -12,7 +12,7 @@ const SummaryPage = () => {
   useEffect(() => {
     const fetchSummary = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/summary/${id}`);
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/summary/${id}`);
         setSummary(res.data);
       } catch (err) {
         setError("Summary not found or failed to load");

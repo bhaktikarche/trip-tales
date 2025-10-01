@@ -49,7 +49,7 @@ function MyAccount() {
     const fetchConversations = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/chats/conversations?userId=${user.id}`,
+          `${import.meta.env.VITE_API_BASE_URL}/chats/conversations?userId=${user.id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setConversations(res.data.conversations || []);
@@ -67,7 +67,7 @@ function MyAccount() {
 
     const fetchUser = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/me", {
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(res.data);
@@ -81,7 +81,7 @@ function MyAccount() {
 
     const fetchUserPosts = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/posts/user", {
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/posts/user`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUserPosts(res.data);
@@ -100,7 +100,7 @@ function MyAccount() {
 
     const fetchLikes = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/likes");
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/likes`);
         const map = {};
         res.data.forEach(({ post_id }) => {
           map[post_id] = (map[post_id] || 0) + 1;
@@ -113,7 +113,7 @@ function MyAccount() {
 
     const fetchHelpfuls = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/helpfuls");
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/helpfuls`);
         const map = {};
         res.data.forEach(({ post_id }) => {
           map[post_id] = (map[post_id] || 0) + 1;
@@ -130,7 +130,7 @@ function MyAccount() {
         await Promise.all(
           userPosts.map(async (post) => {
             const res = await axios.get(
-              `http://localhost:5000/api/comments/${post.id}`
+              `${import.meta.env.VITE_API_BASE_URL}/comments/${post.id}`
             );
             map[post.id] = res.data.length;
           })
@@ -144,7 +144,7 @@ function MyAccount() {
     const fetchBookmarks = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/bookmarks?userId=${user.id}`
+          `${import.meta.env.VITE_API_BASE_URL}/bookmarks?userId=${user.id}`
         );
         setBookmarkedPosts(res.data);
       } catch {
@@ -161,7 +161,7 @@ function MyAccount() {
   // Fetch user experiences and update user state
   const fetchUserExperiences = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/experiences", {
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/experiences`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -188,7 +188,7 @@ function MyAccount() {
         // Update existing experience
         const latestId = userExperiences[0].id;
         await axios.put(
-          `http://localhost:5000/api/experiences/${latestId}`,
+          `${import.meta.env.VITE_API_BASE_URL}/experiences/${latestId}`,
           { experience: experienceText },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -196,7 +196,7 @@ function MyAccount() {
       } else {
         // Create new experience
         await axios.post(
-          "http://localhost:5000/api/experiences",
+          `${import.meta.env.VITE_API_BASE_URL}/experiences`,
           { experience: experienceText },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -247,12 +247,12 @@ function MyAccount() {
 
   const saveEdit = async (postId) => {
     try {
-      await axios.put(`http://localhost:5000/api/posts/${postId}`, editedPost, {
+      await axios.put(`${import.meta.env.VITE_API_BASE_URL}/posts/${postId}`, editedPost, {
         headers: { Authorization: `Bearer ${token}` },
       });
       toast.success("Post updated");
       setEditingPostId(null);
-      const res = await axios.get("http://localhost:5000/api/posts/user", {
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/posts/user`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUserPosts(res.data);
@@ -264,11 +264,11 @@ function MyAccount() {
   const deletePost = async (postId) => {
     if (!window.confirm("Delete this post?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/posts/${postId}`, {
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/posts/${postId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       toast.success("Post deleted");
-      const res = await axios.get("http://localhost:5000/api/posts/user", {
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/posts/user`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUserPosts(res.data);
@@ -281,7 +281,7 @@ function MyAccount() {
   const fetchMessages = async (conversationId) => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/chats/${conversationId}/messages`,
+        `${import.meta.env.VITE_API_BASE_URL}/chats/${conversationId}/messages`,
         {
           headers: { Authorization: `Bearer ${token}` },
           params: { userId: user?.id },
@@ -301,7 +301,7 @@ function MyAccount() {
 
     try {
       await axios.post(
-        `http://localhost:5000/api/chats/${selectedConversation}/messages`,
+        `${import.meta.env.VITE_API_BASE_URL}/chats/${selectedConversation}/messages`,
         {
           sender_id: user.id,
           body: newMessage,
