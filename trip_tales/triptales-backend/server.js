@@ -36,6 +36,7 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
     origin: "https://trip-tales-fqbl.onrender.com", // deployed frontend
+    //  origin: "http://localhost:5173",
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -190,7 +191,8 @@ const initializeApp = async () => {
   // Middleware
  app.use(
   cors({
-    origin: "https://trip-tales-fqbl.onrender.com", // deployed frontend URL
+    // origin: "https://trip-tales-fqbl.onrender.com", // deployed frontend URL
+    origin: "http://localhost:5173",
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
   })

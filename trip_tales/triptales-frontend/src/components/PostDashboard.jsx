@@ -645,7 +645,7 @@ function PostDashboard() {
                     <a
                       href={
                         summaries[post.id] ||
-                        `http://localhost:5173/summary/${post.generated_link}`
+                        `${import.meta.env.VITE_API_BASE_URL}/summary/${post.generated_link}`
                       }
                       target="_blank"
                       rel="noopener noreferrer"
